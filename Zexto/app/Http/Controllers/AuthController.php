@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 
 class AuthController extends Controller
 {
@@ -14,7 +18,14 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['register', 'login']]);
+    }
+
+    public function register(RegisterRequest $request)
+    {
+        //For password encryption during registration a mutator has been set in User Model and for login it has been working default by JWt.
+        $userCreate = User::create($request->all());
+        return response()->json($userCreate, 201);
     }
 
     /**
@@ -22,9 +33,18 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login()
+    public function login(LoginRequest $request)
     {
-        $credentials = request(['email', 'password']);
+        //Using preg_match(Regular expression, value to match with) bcz we want user to login with both Email and Password
+        if(preg_match("/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/i", $request->usernameOrEmail))
+        {
+            //Creating and email key in request
+            $request->email = $request->usernameOrEmail; //$request->username is login user username or password we just it for proper credentials to go and check in attempt().
+            $credentials = ['email' => $request->email, 'password' => $request->password];
+        } else {
+            $credentials = ['username' => $request->usernameOrEmail, 'password' => $request->password];
+
+        }
 
         if (! $token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);

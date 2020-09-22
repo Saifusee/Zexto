@@ -1,5 +1,5 @@
 {
-  "name": "cli-practice",
+  "name": "Zexto",
   "description": "A vueJS project",
   "version": "1.0.0",
   "author": "Saifusee <mohammadsaifulkhan9829@gmail.com>",
@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "axios": "^0.20.0",
-    "vue": "^2.5.11"
+    "vue": "^2.5.11",
+    "vue-router": "^3.4.3",
+    "vuex": "^3.5.1"
   },
   "browserslist": [
     "> 1%",

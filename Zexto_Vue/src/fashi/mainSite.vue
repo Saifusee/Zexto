@@ -1,8 +1,11 @@
 <template>
 <div>
-    <!-- Page Preloder -->
-
-
+  <!-- To ignore Header Comnponents In Login and Register Page-->
+    <template v-if="fashiComponent == 'fashiLogin' || fashiComponent == 'fashiRegister'"> 
+      <component :is="fashiComponent"></component>
+    </template>
+    
+    <template v-else>
     <!-- Header Section Begin -->
     <header class="header-section">
 
@@ -13,8 +16,9 @@
     </header>
     <!-- Header End -->
 
-  <component :is="fashiComponent"></component>
-
+  <!-- <component :is="fashiComponent"></component> -->
+    <router-view></router-view>
+    </template>
     <!-- Partner Logo Section Begin -->
    <fashi-partner-logo></fashi-partner-logo>
     <!-- Partner Logo Section End -->

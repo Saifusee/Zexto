@@ -1,6 +1,7 @@
 <template>
 <div>
-   <component :is="siteInUse"></component>
+   <!-- <component :is="siteInUse"></component> -->
+   <router-view></router-view>
 </div>
 </template>
 

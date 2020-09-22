@@ -16,7 +16,7 @@ class UsersTableDataSeeder extends Seeder
             'firstname' => 'Saiful',
             'lastname' => 'Khan',
             'email' => 'admin@admin.com',
-            'password' => bcrypt('123456789'),
+            'password' => '@@QQ11qq',
             'is_admin' => true,
         ]);
         User::create([
@@ -24,7 +24,7 @@ class UsersTableDataSeeder extends Seeder
             'firstname' => 'Daniel',
             'lastname' => 'Gallis',
             'email' => 'elijahmikaelson@tvdto.com',
-            'password' => bcrypt('123456789'),
+            'password' => '@@QQ11qq',
             'is_vendor' => true,
 
         ]);
@@ -33,28 +33,28 @@ class UsersTableDataSeeder extends Seeder
             'firstname' => 'Kylee',
             'lastname' => 'Bryant',
             'email' => 'josiesaltzman@tvdl.com',
-            'password' => bcrypt('123456789'),
+            'password' => '@@QQ11qq',
         ]);
         User::create([
             'username' => 'Caroline',
             'firstname' => 'Candice',
             'lastname' => 'King',
             'email' => 'carolineforbes@tvd.com',
-            'password' => bcrypt('123456789'),
+            'password' => '@@QQ11qq',
         ]);
         User::create([
             'username' => 'Stefan',
             'firstname' => 'Paul',
             'lastname' => 'Wesley',
             'email' => 'stefansalvatore@tvd.com',
-            'password' => bcrypt('123456789'),
+            'password' => '@@QQ11qq',
         ]);
         User::create([
             'username' => 'Hope',
             'firstname' => 'Danielle',
             'lastname' => 'Rose Russell',
             'email' => 'hopemikaelson@tvdl.com',
-            'password' => bcrypt('123456789'),
+            'password' => '@@QQ11qq',
             'is_vendor' => true,
         ]);
     }

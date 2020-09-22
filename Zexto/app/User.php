@@ -38,14 +38,21 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
-
+    //Jwt function for token generation
     public function getJWTIdentifier()
     {
         return $this->getKey();
     }
 
+    //Jwt function
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    //Mutator to encrypt the password by bcrypt
+    public function setPasswordAttribute($value)
+    {
+       return $this->attributes['password'] = bcrypt($value);
     }
 }
