@@ -25,7 +25,7 @@ class LoginRequest extends FormRequest
     {
             return [
                 'usernameOrEmail' => 'bail|required|string|max:255',
-                'password' => 'bail|required|string|regex:/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\S*[\W]).{8,32}$/i',
+                'password' => 'bail|required|string|min:8|max:32|regex:/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\S*[\W]).{8,32}$/i',
             ];
     }
 
@@ -35,6 +35,8 @@ class LoginRequest extends FormRequest
             'usernameOrEmail.required' => 'E-mail or Username field cannot be empty.',
             'usernameOrEmail.max' => 'E-mail or Username too long, cannot exceed more than 255 characters.',
             'password.required' => 'Password field cannot be empty.',
+            'password.min' => 'Password must be atleast 8 characters long.',
+            'password.max' => 'Password cannot exceed more than 32 characters.',
             'password.regex' => 'Password format invalid, Must include one uppercase letter, one lowercase letter, one number and a special characters.',
         ];
     }

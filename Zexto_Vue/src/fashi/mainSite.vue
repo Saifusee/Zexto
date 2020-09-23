@@ -1,50 +1,41 @@
 <template>
-<div>
-  <!-- To ignore Header Comnponents In Login and Register Page-->
-    <template v-if="fashiComponent == 'fashiLogin' || fashiComponent == 'fashiRegister'"> 
-      <component :is="fashiComponent"></component>
+  <div>
+
+    <!-- Checking if its a login and register page component loading not show any header components, it looks bad. -->
+    <template v-if="publicPage != '/login' && publicPage != '/register'">
+        <!-- Header Section Begin -->
+        <header class="header-section">
+
+            <fashi-header-top></fashi-header-top>
+            <fashi-header-middle></fashi-header-middle>
+            <fashi-header-down></fashi-header-down>
+
+        </header>
+        <!-- Header End -->
     </template>
-    
-    <template v-else>
-    <!-- Header Section Begin -->
-    <header class="header-section">
 
-      <fashi-header-top></fashi-header-top>
-      <fashi-header-middle></fashi-header-middle>
-      <fashi-header-down></fashi-header-down>
-
-    </header>
-    <!-- Header End -->
-
-  <!-- <component :is="fashiComponent"></component> -->
+    <!-- MainSite child components started. -->
     <router-view></router-view>
-    </template>
+    <!-- MainSite child components end. -->
+
     <!-- Partner Logo Section Begin -->
-   <fashi-partner-logo></fashi-partner-logo>
+    <fashi-partner-logo></fashi-partner-logo>
     <!-- Partner Logo Section End -->
 
     <!-- Footer Section Begin -->
     <fashi-footer-section></fashi-footer-section>
     <!-- Footer Section End -->
-</div>
+    
+  </div>
 </template>
 
 <script>
-import index from "./mainSiteComponents/index.vue";
-import blog from "./mainSiteComponents/blog.vue";
-import blogDetails from "./mainSiteComponents/blogDetails.vue";
-import checkOut from "./mainSiteComponents/checkOut.vue";
-import contact from "./mainSiteComponents/contact.vue";
-import faq from "./mainSiteComponents/faq.vue";
-import main from "./mainSiteComponents/main.vue";
-import login from "./mainSiteComponents/login.vue";
-import register from "./mainSiteComponents/register.vue";
-import shoppingCart from "./mainSiteComponents/shoppingCart.vue";
-import shop from "./mainSiteComponents/shop.vue";
-
+//Importing Header Components
 import headerTopContact from "./mainSiteComponents/subComponents/header/headerTopContact.vue";
 import headerMiddlePanel from "./mainSiteComponents/subComponents/header/headerMiddlePanel.vue";
 import headerDownNavigationBar from "./mainSiteComponents/subComponents/header/headerDownNavigationBar.vue";
+
+//Importing Footer Components
 import footerSection from "./mainSiteComponents/subComponents/footer/footerSection.vue";
 import partnerLogo from "./mainSiteComponents/subComponents/footer/partnerLogo.vue";
 
@@ -52,26 +43,24 @@ export default {
   data()
   {
     return {
-      fashiComponent: "fashiLogin",
+      publicPage: "",
     }
+  },
+
+  created()
+  {
+    //Checking if there's '/login' or '/register' in URL window.location.pathname give us value of URI in URL.
+    this.publicPage = window.location.pathname;
   },
 
   components: 
   {
-    "fashiIndex": index,
-    "fashiBlogDetails": blogDetails,
-    "fashiBlog": blog,
-    "fashiCheckOut": checkOut,
-    "fashiFaq": faq,
-    "fashiContact": contact,
-    "fashiLogin": login,
-    "fashiRegister": register,
-    "fashiMain": main,
-    "fashiShop": shop,
-    "fashiShoppingCart": shoppingCart,
+    //Header Components
     "fashiHeaderTop": headerTopContact,
     "fashiHeaderMiddle": headerMiddlePanel,
     "fashiHeaderDown": headerDownNavigationBar,
+
+    //Footer Components
     "fashiFooterSection": footerSection,
     "fashiPartnerLogo": partnerLogo,
   }

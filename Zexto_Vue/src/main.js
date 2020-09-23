@@ -10,7 +10,12 @@ Vue.mixin({
   data()
   {
     return{
-      ROOT_URL: "http://localhost:8080/src/fashi/"
+      /** All the local server CONSTANTS so no need to change anywhere just here only. **/
+      //For frontend domain
+      DOMAIN: "http://localhost:8080",
+      //For all the frontend files, images, etc.
+      ROOT_URL: "http://localhost:8080/src/fashi/",
+      ////////// NOTE: You still have to change the paths of @import function in adminSite.vue and mainSite.vue under <style> tags to include css files. //////////
     };
   }
 })
@@ -40,7 +45,6 @@ Vue.use(axios)
   let token = window.localStorage.getItem("token");
   if(token)
   {
-    console.log(token);
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   }
 

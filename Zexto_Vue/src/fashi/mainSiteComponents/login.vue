@@ -25,11 +25,15 @@
                         <h2>Login</h2>
                         <form @submit.prevent>
                             <div class="alert alert-danger" v-if="loginErrors">
-                                <ul v-if="loginErrors.usernameOrEmail" v-for="usernameOrEmailLoginError in loginErrors.usernameOrEmail">
+                                <ul style="padding:5px" v-if="loginErrors.usernameOrEmail" v-for="usernameOrEmailLoginError in loginErrors.usernameOrEmail">
                                     <li>{{usernameOrEmailLoginError}}</li>
                                 </ul>
-                                <ul v-if="loginErrors.password" v-for="passwordLoginError in loginErrors.password">
+                                <ul style="padding:5px" v-if="loginErrors.password" v-for="passwordLoginError in loginErrors.password">
                                     <li>{{passwordLoginError}}</li>
+                                </ul>
+                                <ul style="padding:5px" v-if="loginErrors.error === 'Unauthorized'">
+                                    <li>Invalid credentials, there's no existing account with the given username/e-mail and password.</li>
+                                    <li>Please make sure uppercase, lowercase letters and whitespaces while typing.</li>
                                 </ul>
                             </div>
                             <div class="group-input">
@@ -109,13 +113,18 @@ export default {
                     this.methodUsernameOrEmail("");
                     this.methodPassword("");
                     window.localStorage.setItem("token", response.data.access_token);
-                    this.$router.push('/blog-details');
+                    window.location = `${this.DOMAIN}/home`;
                 })
                 .catch(error =>
                 {
-                    this.loginErrors = {};
-                    this.loginErrors = error.response.data.errors;
-                    console.log(this.loginErrors);
+                    this.loginErrors = '';                    
+                    if(error.response.data.error)
+                    {
+                        this.loginErrors = error.response.data;
+                    } else 
+                    {
+                        this.loginErrors = error.response.data.errors;
+                    }                    
                 })
             }
 
