@@ -1,26 +1,39 @@
 <template>
 <div>
-   <!-- <component :is="siteInUse"></component> -->
-   <router-view></router-view>
+
+  <div id="modal" v-if="modal">
+     <pop-up-modal></pop-up-modal>
+  </div>
+  <keep-alive>
+    <router-view></router-view>
+   </keep-alive>
+  
 </div>
 </template>
 
 <script>
-import mainSite from "./fashi/mainSite.vue";
-import adminSite from "./fashi/adminSite.vue";
-
+import { mapGetters } from 'vuex'
+import Modal from './fashi/Modal.vue'
 export default {
-  data()
-  {
-    return {
-      siteInUse: "fashiMainSite",
-    }
-  },
 
-  components: 
-  {
-    "fashiMainSite": mainSite,
-    "fashiAdminSite": adminSite,
-  }
+    components:
+    {
+      'popUpModal': Modal,
+    },
+
+    computed:
+    {
+      ...mapGetters(
+        {
+          modal: 'getterModalVisibility'
+        }
+      ),
+    },
 }
 </script>
+<style>
+#modal{
+position: absolute;
+z-index: +5;
+}
+</style>

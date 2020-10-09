@@ -12,50 +12,65 @@ class UsersTableDataSeeder extends Seeder
     public function run()
     {
         User::create([
-            'username' => 'Admin',
-            'firstname' => 'Saiful',
-            'lastname' => 'Khan',
+            'username' => 'admin',
+            'firstname' => 'SAIFUL',
+            'lastname' => 'KHAN',
             'email' => 'admin@admin.com',
             'password' => '@@QQ11qq',
-            'is_admin' => true,
+            'is_admin' => 1,
+            'profile_picture' => '0_admin.jpg',
         ]);
         User::create([
-            'username' => 'Elijah',
-            'firstname' => 'Daniel',
-            'lastname' => 'Gallis',
+            'username' => 'elijah',
+            'firstname' => 'DANIEL',
+            'lastname' => 'GALLIS',
             'email' => 'elijahmikaelson@tvdto.com',
             'password' => '@@QQ11qq',
-            'is_vendor' => true,
-
+            'is_vendor' => 1,
+            'profile_picture' => '0_elijah.jpg',
         ]);
         User::create([
-            'username' => 'Josie',
-            'firstname' => 'Kylee',
-            'lastname' => 'Bryant',
+            'username' => 'josie',
+            'firstname' => 'KYLEE',
+            'lastname' => 'BRYANT',
             'email' => 'josiesaltzman@tvdl.com',
             'password' => '@@QQ11qq',
+            'profile_picture' => '0_josie.jpg',
         ]);
         User::create([
-            'username' => 'Caroline',
-            'firstname' => 'Candice',
-            'lastname' => 'King',
+            'username' => 'caroline',
+            'firstname' => 'CANDICE',
+            'lastname' => 'KING',
             'email' => 'carolineforbes@tvd.com',
             'password' => '@@QQ11qq',
+            'profile_picture' => '0_caroline.jpg',
         ]);
         User::create([
-            'username' => 'Stefan',
-            'firstname' => 'Paul',
-            'lastname' => 'Wesley',
+            'username' => 'stefan',
+            'firstname' => 'PAUL',
+            'lastname' => 'WESLEY',
             'email' => 'stefansalvatore@tvd.com',
             'password' => '@@QQ11qq',
+            'profile_picture' => '0_stefan.jpg',
         ]);
         User::create([
-            'username' => 'Hope',
-            'firstname' => 'Danielle',
-            'lastname' => 'Rose Russell',
+            'username' => 'hope',
+            'firstname' => 'DANIELLE',
+            'lastname' => 'ROSE RUSSELL',
             'email' => 'hopemikaelson@tvdl.com',
             'password' => '@@QQ11qq',
-            'is_vendor' => true,
+            'is_vendor' => 1,
+            'profile_picture' => '0_hope.jpg',
+        ]);
+        User::create([
+            'username' => 'chandler',
+            'firstname' => 'MATHEW',
+            'lastname' => 'PERRY',
+            'email' => 'chandlerbing@friends.com',
+            'password' => '@@QQ11qq',
+            'is_vendor' => 1,
+            'is_admin' => 1,
+            'profile_picture' => '0_chandler.jpg',
         ]);
     }
 }

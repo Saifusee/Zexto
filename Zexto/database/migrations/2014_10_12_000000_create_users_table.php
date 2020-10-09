@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('firstname' )->nullable();
             $table->string('lastname' )->nullable();
             $table->string('password' );
+            $table->string('profile_picture')->nullable();
             $table->boolean('is_vendor')->default(false);
             $table->boolean('is_admin')->default(false);
             $table->rememberToken();

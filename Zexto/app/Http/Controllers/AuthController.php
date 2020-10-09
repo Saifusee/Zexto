@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegisterRequest;
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
@@ -18,14 +18,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['register', 'login']]);
-    }
-
-    public function register(RegisterRequest $request)
-    {
-        //For password encryption during registration a mutator has been set in User Model and for login it has been working default by JWt.
-        $userCreate = User::create($request->all());
-        return response()->json($userCreate, 201);
+        $this->middleware('auth:api', ['except' => ['login', 'me']]);
     }
 
     /**
@@ -46,7 +39,7 @@ class AuthController extends Controller
 
         }
 
-        if (! $token = auth()->attempt($credentials)) {
+        if (! $token = auth()->attempt($credentials, ['exp' => Carbon::now()->addDays(20)->timestamp])) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 

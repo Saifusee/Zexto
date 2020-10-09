@@ -1,69 +1,73 @@
 <template>
   <div>
-
-    <!-- Checking if its a login and register page component loading not show any header components, it looks bad. -->
-    <template v-if="publicPage != '/login' && publicPage != '/register'">
+    <template v-if="this.$router.currentRoute.name !== 'login' && this.$router.currentRoute.name !== 'register' && this.$router.currentRoute.name !== '404'">
         <!-- Header Section Begin -->
         <header class="header-section">
 
+            <!-- <fashi-header-top></fashi-header-top> -->
             <fashi-header-top></fashi-header-top>
-            <fashi-header-middle></fashi-header-middle>
             <fashi-header-down></fashi-header-down>
 
         </header>
         <!-- Header End -->
-    </template>
+        </template>
 
     <!-- MainSite child components started. -->
-    <router-view></router-view>
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
     <!-- MainSite child components end. -->
+    <template v-if="this.$router.currentRoute.name !== '404'">
+      <!-- Partner Logo Section Begin -->
+      <fashi-partner-logo></fashi-partner-logo>
+      <!-- Partner Logo Section End -->
 
-    <!-- Partner Logo Section Begin -->
-    <fashi-partner-logo></fashi-partner-logo>
-    <!-- Partner Logo Section End -->
-
-    <!-- Footer Section Begin -->
-    <fashi-footer-section></fashi-footer-section>
-    <!-- Footer Section End -->
-    
+      <!-- Footer Section Begin -->
+      <fashi-footer-section></fashi-footer-section>
+      <!-- Footer Section End -->
+    </template>
   </div>
 </template>
 
 <script>
 //Importing Header Components
-import headerTopContact from "./mainSiteComponents/subComponents/header/headerTopContact.vue";
-import headerMiddlePanel from "./mainSiteComponents/subComponents/header/headerMiddlePanel.vue";
+import headerTopPanel from "./mainSiteComponents/subComponents/header/headerTopPanel.vue";
 import headerDownNavigationBar from "./mainSiteComponents/subComponents/header/headerDownNavigationBar.vue";
 
 //Importing Footer Components
 import footerSection from "./mainSiteComponents/subComponents/footer/footerSection.vue";
 import partnerLogo from "./mainSiteComponents/subComponents/footer/partnerLogo.vue";
 
+//Importing axios
+import axios from 'axios'
+
 export default {
-  data()
-  {
-    return {
-      publicPage: "",
-    }
-  },
-
-  created()
-  {
-    //Checking if there's '/login' or '/register' in URL window.location.pathname give us value of URI in URL.
-    this.publicPage = window.location.pathname;
-  },
-
   components: 
   {
     //Header Components
-    "fashiHeaderTop": headerTopContact,
-    "fashiHeaderMiddle": headerMiddlePanel,
+    "fashiHeaderTop": headerTopPanel,
     "fashiHeaderDown": headerDownNavigationBar,
 
     //Footer Components
     "fashiFooterSection": footerSection,
     "fashiPartnerLogo": partnerLogo,
-  }
+  },
+
+  created()
+{
+    if(window.localStorage.getItem('token') !== undefined)
+    {
+        axios.post('me')
+        .then(response =>
+        {
+            //Setting the User Details on user.js of vuex
+            this.$store.dispatch('actionUserDetails', response.data);
+
+
+        })
+    }
+
+}
 }
 </script>
 

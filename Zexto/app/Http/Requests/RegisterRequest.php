@@ -24,11 +24,13 @@ class RegisterRequest extends FormRequest
     public function rules()
     {
         return [
-            'username' => 'required|string|unique:users,username|max:255',
+            'username' => 'required|string|unique:users,username|regex:/^([a-zA-Z0-9_\-\.]+)$/i|max:255',
             'email' => 'bail|required|string|unique:users,email|max:255|regex:/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/i',
+            'is_admin' => 'bail|boolean|max:1|min:1',
             'is_vendor' => 'bail|required|boolean|max:1|min:1',
             'password' => 'bail|required|string|confirmed|regex:/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\S*[\W]).{8,32}$/i',
-            'password_confirmation' => 'bail|required|string|regex:/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\S*[\W]).{8,32}$/i'
+            'password_confirmation' => 'bail|required|string|regex:/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\S*[\W]).{8,32}$/i',
+            'profile_picture' => 'bail|nullable|mimes:jpeg,bmp,png|max:20480'
         ];
     }
 
@@ -43,12 +45,16 @@ class RegisterRequest extends FormRequest
             'username.required' => 'Username field cannot be empty.',
             'username.unique' => 'There\'s already a User Account with the given Username',
             'username.max' => 'Username too long, cannot exceed more than 255 characters.',
+            'username.regex' => 'Username is of invalid format.',
             'is_vendor.required' => 'You must have to select one User Status.',
             'password.required' => 'Password field cannot be empty.',
             'password.confirmed' => 'Password didn\'t match with the Confirm Password field, Please make sure uppercase and lowercase letters on both fields.',
             'password.regex' => 'Password format invalid, Must include one uppercase letter, one lowercase letter, one number and a special characters.',
             'password_confirmation.required' => 'Password Confirmation field cannot be empty.',
             'password_confirmation.regex' => 'Password format invalid, Must include one uppercase letter, one lowercase letter, one number and a special characters.',
+            'profile_picture.max' => 'Profile-image file cannot be more than 20MB.',
+            'profile_picture.mimes' => 'Profile-image file extension had to be of -> .jpeg/.bmp/.png ',
+
         ];
     }
 }

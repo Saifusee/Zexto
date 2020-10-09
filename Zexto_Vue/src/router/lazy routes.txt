@@ -1,0 +1,65 @@
+const MainSite = resolve => {
+    require.ensure(['./../fashi/mainSite.vue'], () => {
+        resolve(require('./../fashi/mainSite.vue'));
+    });
+}
+const AdminSite = resolve => {
+    require.ensure(['./../fashi/adminSite.vue'], () => {
+        resolve(require('./../fashi/adminSite.vue'));
+    });
+}
+const login = resolve => {
+    require.ensure(['./../fashi/mainSiteComponents/login.vue'], () => {
+        resolve(require('./../fashi/mainSiteComponents/login.vue'));
+    });
+}
+const register = resolve => {
+    require.ensure(['./../fashi/mainSiteComponents/register.vue'], () => {
+        resolve(require('./../fashi/mainSiteComponents/register.vue'));
+    });
+}
+const index = resolve => {
+    require.ensure(['./../fashi/mainSiteComponents/index.vue'], () => {
+        resolve(require('./../fashi/mainSiteComponents/index.vue'));
+    });
+}
+const blog = resolve => {
+    require.ensure(['./../fashi/mainSiteComponents/blog.vue'], () => {
+        resolve(require('./../fashi/mainSiteComponents/blog.vue'));
+    });
+}
+const blogDetails = resolve => {
+    require.ensure(['./../fashi/mainSiteComponents/blogDetails.vue'], () => {
+        resolve(require('./../fashi/mainSiteComponents/blogDetails.vue'));
+    });
+}
+const checkOut = resolve => {
+    require.ensure(['./../fashi/mainSiteComponents/checkOut.vue'], () => {
+        resolve(require('./../fashi/mainSiteComponents/checkOut.vue'));
+    });
+}
+const contact = resolve => {
+    require.ensure(['./../fashi/mainSiteComponents/contact.vue'], () => {
+        resolve(require('./../fashi/mainSiteComponents/contact.vue'));
+    });
+}
+const faq = resolve => {
+    require.ensure(['./../fashi/mainSiteComponents/faq.vue'], () => {
+        resolve(require('./../fashi/mainSiteComponents/faq.vue'));
+    });
+}
+const main = resolve => {
+    require.ensure(['./../fashi/mainSiteComponents/main.vue'], () => {
+        resolve(require('./../fashi/mainSiteComponents/main.vue'));
+    });
+}
+const shoppingCart = resolve => {
+    require.ensure(['./../fashi/mainSiteComponents/shoppingCart.vue'], () => {
+        resolve(require('./../fashi/mainSiteComponents/shoppingCart.vue'));
+    });
+}
+const shop = resolve => {
+    require.ensure(['./../fashi/mainSiteComponents/shop.vue'], () => {
+        resolve(require('./../fashi/mainSiteComponents/shop.vue'));
+    });
+}

@@ -41,42 +41,17 @@
                         <div class="recent-post">
                             <h4>Recent Post</h4>
                             <div class="recent-blog">
-                                <a href="#" class="rb-item">
+                            <template v-for="blog in blogs">
+                                <router-link :to="{name: 'blog-details', params:{id: blog.id}}" tag="a" class="rb-item">
                                     <div class="rb-pic">
-                                        <img :src="this.ROOT_URL + 'img/blog/recent-1.jpg'" alt="">
+                                        <img :src="BLOG_MAIN_IMAGE + blog.blog_main_image" alt="blog">
                                     </div>
                                     <div class="rb-text">
-                                        <h6>The Personality Trait That Makes...</h6>
-                                        <p>Fashion <span>- May 19, 2019</span></p>
+                                        <h6>{{blog.blog_title}}</h6>
+                                        <p>{{blog.category_tag}} <span>- {{blog.created_at}}</span></p>
                                     </div>
-                                </a>
-                                <a href="#" class="rb-item">
-                                    <div class="rb-pic">
-                                        <img :src="this.ROOT_URL + 'img/blog/recent-2.jpg'" alt="">
-                                    </div>
-                                    <div class="rb-text">
-                                        <h6>The Personality Trait That Makes...</h6>
-                                        <p>Fashion <span>- May 19, 2019</span></p>
-                                    </div>
-                                </a>
-                                <a href="#" class="rb-item">
-                                    <div class="rb-pic">
-                                        <img :src="this.ROOT_URL + 'img/blog/recent-3.jpg'" alt="">
-                                    </div>
-                                    <div class="rb-text">
-                                        <h6>The Personality Trait That Makes...</h6>
-                                        <p>Fashion <span>- May 19, 2019</span></p>
-                                    </div>
-                                </a>
-                                <a href="#" class="rb-item">
-                                    <div class="rb-pic">
-                                        <img :src="this.ROOT_URL + 'img/blog/recent-4.jpg'" alt="">
-                                    </div>
-                                    <div class="rb-text">
-                                        <h6>The Personality Trait That Makes...</h6>
-                                        <p>Fashion <span>- May 19, 2019</span></p>
-                                    </div>
-                                </a>
+                                </router-link>
+                            </template>
                             </div>
                         </div>
                         <div class="blog-tags">
@@ -95,84 +70,24 @@
                 </div>
                 <div class="col-lg-9 order-1 order-lg-2">
                     <div class="row">
+                    
+                    <template v-for="blog in blogs">
                         <div class="col-lg-6 col-sm-6">
                             <div class="blog-item">
                                 <div class="bi-pic">
-                                    <img :src="this.ROOT_URL + 'img/blog/blog-1.jpg'" alt="">
+                                    <router-link :to="{name: 'blog-details', params:{id: blog.id}}" tag="a">
+                                        <img :src="BLOG_MAIN_IMAGE + blog.blog_main_image" alt="blog">
+                                    </router-link>
                                 </div>
                                 <div class="bi-text">
-                                    <a href="./blog-details.html">
-                                        <h4>The Personality Trait That Makes People Happier</h4>
-                                    </a>
-                                    <p>travel <span>- May 19, 2019</span></p>
+                                    <router-link :to="{name: 'blog-details', params:{id: blog.id}}" tag="a">
+                                        <h4>{{blog.blog_title}}</h4>
+                                    </router-link>
+                                    <p>{{blog.category_tag}}<span>- {{blog.created_at}}</span></p>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-6 col-sm-6">
-                            <div class="blog-item">
-                                <div class="bi-pic">
-                                    <img :src="this.ROOT_URL + 'img/blog/blog-2.jpg'" alt="">
-                                </div>
-                                <div class="bi-text">
-                                    <a href="./blog-details.html">
-                                        <h4>This was one of our first days in Hawaii last week.</h4>
-                                    </a>
-                                    <p>Fashion <span>- May 19, 2019</span></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-sm-6">
-                            <div class="blog-item">
-                                <div class="bi-pic">
-                                    <img :src="this.ROOT_URL + 'img/blog/blog-3.jpg'" alt="">
-                                </div>
-                                <div class="bi-text">
-                                    <a href="./blog-details.html">
-                                        <h4>Last week I had my first work trip of the year to Sonoma Valley</h4>
-                                    </a>
-                                    <p>travel <span>- May 19, 2019</span></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-sm-6">
-                            <div class="blog-item">
-                                <div class="bi-pic">
-                                    <img :src="this.ROOT_URL + 'img/blog/blog-4.jpg'" alt="">
-                                </div>
-                                <div class="bi-text">
-                                    <a href="./blog-details.html">
-                                        <h4>Happppppy New Year! I know I am a little late on this post</h4>
-                                    </a>
-                                    <p>Fashion <span>- May 19, 2019</span></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-sm-6">
-                            <div class="blog-item">
-                                <div class="bi-pic">
-                                    <img :src="this.ROOT_URL + 'img/blog/blog-5.jpg'" alt="">
-                                </div>
-                                <div class="bi-text">
-                                    <a href="./blog-details.html">
-                                        <h4>Absolue collection. The Lancome team has been one…</h4>
-                                    </a>
-                                    <p>Model <span>- May 19, 2019</span></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-sm-6">
-                            <div class="blog-item">
-                                <div class="bi-pic">
-                                    <img :src="this.ROOT_URL + 'img/blog/blog-6.jpg'" alt="">
-                                </div>
-                                <div class="bi-text">
-                                    <a href="./blog-details.html">
-                                        <h4>Writing has always been kind of therapeutic for me</h4>
-                                    </a>
-                                    <p>Fashion <span>- May 19, 2019</span></p>
-                                </div>
-                            </div>
-                        </div>
+                    </template>
                         <div class="col-lg-12">
                             <div class="loading-more">
                                 <i class="icon_loading"></i>
@@ -191,7 +106,22 @@
 </div>
 </template>
 <script>
+import axios from 'axios'
+
 export default {
 
+    created()
+    {
+        axios.get('blogs')
+        .then(response => this.blogs = response.data)
+        .catch(error => error)
+    },
+
+    data()
+    {
+        return{
+            blogs: "",
+        };
+    },
 }
 </script>
