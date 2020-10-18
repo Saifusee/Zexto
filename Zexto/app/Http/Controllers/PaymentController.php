@@ -174,25 +174,25 @@ class PaymentController extends Controller
                        {
                         $title = "Transaction Fail!";
                         $class = "alert alert-danger";
-                        $order->payment_status = "0";
-                        $order->order_status = "0";
+                        $order->payment_status = static::PAYMENT_FAIL;    //Getting this constant values from parent class Controller.php
+                        $order->order_status = static::ORDER_FAIL;   //Getting this constant values from parent class Controller.php
                         $net_amount_debit = 0.00;
                        } elseif ($status == "success")
                        {
                         $title = "Transaction Successful!";
                         $class = "alert alert-success";
-                        $order->payment_status = "1";
-                        $order->order_status = "4";
+                        $order->payment_status = static::PAYMENT_SUCCESS;
+                        $order->order_status = static::ORDER_YET_TO_DELIVERED;
                        } else
                        {
                         $title = "Invalid Transaction, Please try again.";
                        }
-                       if($request->unmappedstatus == "userCancelled" || $request->field8 == 'GV00004 User pressed cancel button')
+                       if($request->unmappedstatus == "userCancelled" || $request->field8 == 'GV00004 User pressed cancel button' || $request->field9 == "Cancelled by user")
                        {
                         $title = "Transaction Cancel!";
                         $class = "alert alert-danger";
-                        $order->payment_status = "3";
-                        $order->order_status = "3";
+                        $order->payment_status = static::PAYMENT_CANCEL;
+                        $order->order_status = static::ORDER_CANCEL;
                         $net_amount_debit = 0.00;
                        }
                         $order->payment_gateway_txnid = $request->payuMoneyId;
