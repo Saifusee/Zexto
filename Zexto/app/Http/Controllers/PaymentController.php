@@ -200,7 +200,7 @@ class PaymentController extends Controller
                         $data = ['class' => $class, 'status' => $status, 'firstname' => $firstname, 'order_id' => $order->id,  'email' => $email, 'debit_amount' => $net_amount_debit, 'txnid' => $txnid, 'productinfo' => $productinfo,];
                    }
         $order->save();
-        return view('transaction.response')->with(['frontend_url'=> env('FRONTEND_URL'), 'title' => $title, 'data' => $data]);
+        return view('payu.response')->with(['frontend_url'=> env('FRONTEND_URL'), 'title' => $title, 'data' => $data]);
     }
 
 }
