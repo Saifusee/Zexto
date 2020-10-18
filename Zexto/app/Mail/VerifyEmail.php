@@ -7,6 +7,8 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
+use App\User;
+
 class VerifyEmail extends Mailable
 {
     use Queueable, SerializesModels;
@@ -37,13 +39,19 @@ class VerifyEmail extends Mailable
         $username = $this->user_username; //User id we recieve
         $decode_string = $string1.$id.$string2.$id.$username.$string1.$username.$string2;  //Creating a random string.
         $token = base64_encode($decode_string);  //Generating token with the string we created.
-        $link = env('FRONTEND_URL').'verify-email/'.$token.'/verify';
 
-        return $this->from('khaninc.9829@gmail.com', 'Zexto Administration')
-                    ->subject('Mailtrap Confirmation')
+        //Saving token in user database
+        $user = User::find($id);
+        $user['remember_token'] = $token;
+        $user->save();
+        
+        //Creating a link to provide in Email
+        $link = env('FRONTEND_URL').'verify-email/'.$token.'/verify'.'/'.$id;
+
+        return $this->from('khaninc.9829@gmail.com', 'Zexto')
+                    ->subject('E-mail Address Verification')
                     ->markdown('emails.mail')
                     ->with([
-                        'name' => 'New Mailtrap USer',
                         'link' => $link,
                         'id' => $id,
                         'username' => $username,

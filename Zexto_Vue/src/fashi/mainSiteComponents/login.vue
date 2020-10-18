@@ -119,7 +119,7 @@ export default {
                     window.localStorage.setItem("token", response.data.access_token);
 
                     //Redirecting to home if Admin
-                     window.location = `${this.DOMAIN_FRONTEND}/`;
+                     window.location = `${this.DOMAIN_FRONTEND}`;
 
                 })
                 .catch(error =>

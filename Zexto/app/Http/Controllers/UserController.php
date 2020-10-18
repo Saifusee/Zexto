@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\User;
 use File;
+use App\Mail\VerifyEmail;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\EditRegisterRequest;
@@ -13,7 +15,7 @@ class UserController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['store']]);
+        $this->middleware('auth:api', ['except' => ['store', 'verifyEmailToken']]);
     }
 
     /**
@@ -50,7 +52,33 @@ class UserController extends Controller
             $user->profile_picture = '0_default.jpg';
         }
         $user->save();
+
+        //Sending Verification Email
+        Mail::to($request->email)->send(new VerifyEmail($user->id, $user->username));
+
+        
         return response()->json($user, 201);
+    }
+
+
+    //Verify the Token recieved from source
+    public function verifyEmailToken(Request $request)
+    {
+        $user = User::find($request->id);
+        $user_token = $user->remember_token;
+        if($request->token == $user_token)
+        {
+            $user['email_verified'] = 1;
+            $user->save();
+
+            return response()->json(['message' => 'E-mail Verified Successfully'], 200);
+        } else
+        {
+            $user['email_verified'] = 0;
+            $user->save();
+
+            return response()->json(['message' => 'E-mail Verification failed'], 200);
+        }
     }
 
 
@@ -174,7 +202,8 @@ class UserController extends Controller
             $user->is_vendor = 1;
         } elseif($status == 1 && $adminStatus == 1)
         {
-            $user->is_vendor = 1;
+            $user->is_vendor = 0;
+            $user->is_admin = 0;
         } 
         elseif ($status === 1) 
         {

@@ -10,49 +10,56 @@
             </div>
             <div class="card-body">
               <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                  <thead>
-                    <tr>
-                      <th>Blog Creator</th>
-                      <th>Title</th>
-                      <th>Main Image</th>
-                      <th>Category Tag</th>
-                      <th>Product Tags</th>
-                      <th>Status</th>
-                      <th>Comments</th>
-                      <th>Updated at</th>
-                      <th title="Edit Blog">Edit</th>
-                      <th title="Change Status of Blog">Change Status</th>
-                      <th title="Delete Blog">Delete</th>
-                    </tr>
-                  </thead>
-                  <!-- Using Transition group to add transitions where transition group tag going to replace with tbody in DOM -->
-                  <transition-group name="fade-tbody" tag="tbody" mode="out-in"> 
-                    <tr class="ttr" v-for="blog in allBlogs" :key="blog.id">
-                      <td><router-link tag="a" :to="{name: 'user-profile', params: {id: blog.user_id}}">{{blog.username}}</router-link></td>
-                      <td><a :href="$router.resolve({name: 'blog-details', params: {id: blog.id}}).href">{{blog.blog_title}}</a></td>
-                      <td><a :href="$router.resolve({name: 'blog-details', params: {id: blog.id}}).href"><img :src="BLOG_MAIN_IMAGE + blog.blog_main_image" width="100px"></a></td>
-                      <td>{{blog.category_tag}}</td>
-                      <template v-if="blog.product_tags !== ''">
-                          <td>{{blog.product_tags}}</td>
+
+                  <v-client-table :data="rows" :columns="columns" :options="options">
+                     <!-- For Blog creator -->
+                      <template slot="username" slot-scope="{row}">
+                          <router-link tag="a" :to="{name: 'user-profile', params: {id: row.user_id}}">{{row.username}}</router-link>
                       </template>
-                      <template v-else>
-                          <td>---No Tags---</td>
+                     <!-- For Blog title -->
+                      <template slot="blog_title" slot-scope="{row}">
+                          <a :href="$router.resolve({name: 'blog-details', params: {id: row.id}}).href">{{row.blog_title}}</a>
                       </template>
-                      <template v-if="blog.blog_status == 'Approved'">
-                      <td style="color:green">{{blog.blog_status}}</td>
+                     <!-- For Blog title -->
+                      <template slot="blog_main_image" slot-scope="{row}">
+                          <a :href="$router.resolve({name: 'blog-details', params: {id: row.id}}).href"><img :src="BLOG_MAIN_IMAGE + row.blog_main_image" width="100px" style="border-radius: 75%"></a>
                       </template>
-                      <template v-if="blog.blog_status == 'Disapproved'">
-                      <td style="color:red">{{blog.blog_status}}</td>
+                     <!-- For Product Tags -->
+                      <template slot="product_tags" slot-scope="{row}">
+                          <template v-if="row.product_tags !== ''">
+                              <td>{{row.product_tags}}</td>
+                          </template>
+                          <template v-else>
+                              ---No Tags---
+                          </template>
                       </template>
-                      <td><router-link tag="a" :to="{name: 'admin-blog-comments', params: {id: blog.id}}">{{ blog.comment_count }}</router-link></td>
-                      <td>{{blog.updated_at}}</td>
-                      <th class="icon-user" :title="`Edit Blog`"><i class="fa fa-edit" @click="editBlog(blog.id)"></i></th>
-                      <td class="icon-user" title="Change Status"><i class="fa fa-circle" @click="blogStatus(blog.id, blog.blog_title)"></i></td>
-                      <td class="icon-user" :title="`Delete Blog`"><i class="fa fa-trash" @click="deleteBlog(blog.id, blog.blog_title)"></i></td>
-                    </tr>
-                </transition-group>
-                </table>
+                    <!-- For Blog Status -->
+                      <template slot="blog_status" slot-scope="{row}">
+                          <template v-if="row.blog_status == 'Approved'">
+                          <span style="color:green">{{row.blog_status}}</span>
+                          </template>
+                          <template v-if="row.blog_status == 'Disapproved'">
+                          <span style="color:red">{{row.blog_status}}</span>
+                          </template>
+                      </template>
+                    <!-- For Comment Count -->
+                      <template slot="comment_count" slot-scope="{row}">
+                          <router-link tag="a" :to="{name: 'admin-blog-comments', params: {id: row.id}}">{{ row.comment_count }}</router-link>
+                      </template>
+                    <!-- For Edit Button -->
+                      <template slot="edit" slot-scope="{row}">
+                          <i class="fa fa-edit" :title="`Edit Blog`" @click="editBlog(row.id)"></i>
+                      </template>
+                    <!-- For Change Status Button -->
+                      <template slot="change_status" slot-scope="{row}">
+                          <i class="fa fa-circle" title="Change Blog Status" @click="blogStatus(row.id, row.blog_title)"></i>
+                      </template>
+                    <!-- For Delete Button -->
+                      <template slot="delete" slot-scope="{row}">
+                          <i class="fa fa-trash" :title="`Delete Blog`" @click="deleteBlog(row.id, row.blog_title)"></i>
+                      </template>
+                  </v-client-table>
+
               </div>
             </div>
           </div>
@@ -73,7 +80,42 @@ export default {
   data()
   {
     return{
-      allBlogs: '',
+      columns: ['username', 'blog_title', 'blog_main_image', 'category_tag', 'product_tags', 'blog_status', 'comment_count', 'created_at', 'updated_at', 'change_status', 'edit', 'delete'],
+
+      rows: [], 
+
+      options: {
+        filterByColumn: true, 
+        perPage: 10,
+        texts: {
+          loadingError: 'Oops, Something went wrong.',
+          filter: "Search",
+          filterBy: '{column}',
+          count: ''
+        },
+        filterable: ['username', 'blog_title', 'blog_main_image', 'category_tag', 'product_tags', 'blog_status', 'comment_count', 'created_at', 'updated_at',],
+        pagination: { chunk: 10, dropdown: false },
+        headings: {
+            username: 'Blog Creator',
+            blog_title: 'Blog Title',
+            blog_main_image: 'Main Image',
+            category_tag: 'Category Tag',
+            product_tags: 'Product Tags',
+            blog_status: 'Status',
+            comment_count: 'Comments',
+            updated_at: 'Updated At',
+            edit: 'Edit Blog',
+            change_status: 'Change Status',
+            delete: 'Delete',
+        },
+        columnsDropdown: true,
+        filterAlgorithm: {
+          //Filter all Vendor Approval Status comments
+          blog_status(row, query){
+            return (row.blog_status).includes(query);
+          },
+        },
+      }
     };
   },
 
@@ -132,7 +174,7 @@ export default {
         .then(
             response => 
             {
-                this.allBlogs = response.data;
+                this.rows = response.data;
             }
         )
     },
@@ -183,33 +225,19 @@ export default {
 
 
 <style scoped>
-/* Table Animation */
-.fade-tbody-enter{
-  opacity: 0;
-}
-.fade-tbody-enter-active{
-  transition: opacity 1s;
-}
-.fade-tbody-leave-active{
-  transition: opacity 1s;
-  opacity: 0;
-}
-
 /* Buttons on Hover */
-.icon-user:hover{
-  background-color: #c0c0c0;
-}
-.ttr:hover{
-  background-color: #f1f1f1;
-}
-th, td{
-  text-align: center;
-}
 a{
   text-decoration: none;
   color: grey;
 }
 a:hover{
   color: black;
+}
+
+.VueTables {
+  text-align: center;
+}
+.VueTables__error {
+  color: red;
 }
 </style>

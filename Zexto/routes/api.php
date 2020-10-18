@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use App\Mail\VerifyEmail;
 use Illuminate\Support\Facades\Mail;
+use App\User;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,15 +23,20 @@ Route::group([
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');
     Route::post('me', 'AuthController@me');
-    Route::post('email', function(Request $request){
-        Mail::to($request->email)->send(new VerifyEmail($request->id, $request->username));
-        return response()->json('Mail Sent Successfully, check it.', 200);
-    });
 
     //All User related
     Route::resource('users', 'UserController');
     Route::post('users/{user}/adm', 'UserController@changeAdminStatus');
     Route::post('users/{user}/ven', 'UserController@changeVendorStatus');
+    Route::post('check-email', 'UserController@verifyEmailToken');
+        //This is for direct email verification.
+    Route::post('resend-email', function(Request $request){
+        $user = User::find($request->id);
+        $user->email = $request->email;
+        $user->save();
+        Mail::to($request->email)->send(new VerifyEmail($user->id, $user->username));
+        return response()->json('email sent successfully', 200);
+    });
 
     //All Blog related
     Route::resource('blogs', 'BlogController');
@@ -44,4 +50,9 @@ Route::group([
     Route::post('comments/{comment}/status/admin', 'BlogsCommentController@changeAdminStatus');
     Route::get('comments/{comment}/blog/comments', 'BlogsCommentController@blogCommentAdminIndex');
     Route::get('comments/{comment}/user/comments', 'BlogsCommentController@userCommentAdminIndex');
+
+
+    Route::post('checkout/payment/payu', 'PaymentController@payuPaymentInitialize');
+
 });
+

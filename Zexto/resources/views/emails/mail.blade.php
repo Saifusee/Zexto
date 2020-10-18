@@ -10,16 +10,15 @@
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
         <link href="css/app.css" rel="stylesheet" type="text/css">
     </head>
-    <body class="alert alert-primary">
+    <body style="background-color: blue; color: black;">
             <div class="container-fluid text-center">
-                <div class="alert alert-warning">
-                    <h1>Thank you for registering to Zexto {{$name}}</h1>
+                <div style="background-color: yellow; color: black;">
+                    <h1>Thank you for registering to Zexto {{$username}}</h1>
                     <h4>We hope you would have wonderful experience with us.</h4>
-                    <h4>{{$id}}</h4>
-                    <h4>{{$username}}</h4>
+                    <h4>{{$username}}, please click the link below to verify your e-mail address.</h4>
                 </div>
                 <div class="alert alert-warning">
-                    <a href="{{ url($link) }}"><button class="btn btn-primary">CLICK HERE TO VERIFY EMAIL ADDRESS.</button></a>
+                    <a href="{{ url($link) }}" style="background-color: #4CAF50; border: none; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer;">CLICK HERE TO VERIFY EMAIL ADDRESS.</a>
                 </div>
             </div>
     </body>

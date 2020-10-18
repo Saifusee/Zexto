@@ -85,7 +85,7 @@
                 </div>
 
                 <div class="links">
-                    <a href="https://localhost:8080">Zexto Frontend</a>
+                    <a href="{{ url($frontend_url) }}">Zexto Frontend</a>
                 </div>
             </div>
         </div>

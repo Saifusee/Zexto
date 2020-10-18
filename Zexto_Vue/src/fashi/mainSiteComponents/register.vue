@@ -99,6 +99,7 @@ export default {
         return {
             registrationErrors: {},
             profilePicture: "",
+            userId: "",
         };
     },
     computed: 
@@ -151,7 +152,6 @@ export default {
                 data.append('password_confirmation', document.getElementById("confirm-password").value);
                 data.append('is_vendor', selected);
                 data.append('profile_picture', this.profilePicture);
-
             //sending post request via axios.
             axios.post("users", data)
             .then(response =>
@@ -161,14 +161,21 @@ export default {
             this.methodUsername("");
             this.methodEmail("");
             this.methodPassword(""); 
+            this.userId = response.data.id;
             document.getElementById("confirm-password").value = ""; 
-            window.location = `${this.DOMAIN_FRONTEND}/login`; 
+            window.location = `${this.DOMAIN_FRONTEND}login`; 
             }) 
             .catch(error =>
             {
             //if there any validation errors first removing all previous errors the on second statement filling with new one.
-             this.registrationErrors = "";   
-             this.registrationErrors = error.response.data.errors;
+             this.registrationErrors = "";  
+             if(error.response.data.errors) 
+             {
+                this.registrationErrors = error.response.data.errors;
+             } else if (error.response.data.exception)
+             {
+                this.registrationErrors = {'email': ['Cannot established connection with provided email.']};
+             }
              //error alert automatically disappear after 1 minute.
              setTimeout(() => this.registrationErrors = "", constant.TIMEOUT);
             })

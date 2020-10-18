@@ -21,7 +21,7 @@ const mutations = {
     mutateHeaderLogout: (state, payload) =>
     {
             window.localStorage.removeItem("token");
-            window.location = `${constant.DOMAIN_FRONTEND}/login`;
+            window.location = `${constant.DOMAIN_FRONTEND}login`;
     },
 }
 

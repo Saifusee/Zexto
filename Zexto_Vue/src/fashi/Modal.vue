@@ -12,7 +12,7 @@
                     <div class="modal-body">{{modalBody}}</div>
                     <div class="modal-footer">
                         <button class="btn btn-secondary" type="button" data-dismiss="modal" @click="popUpCancel">Cancel</button>
-                        <button class="btn btn-primary" @click="popUpApprove">{{modalButton}}</button>
+                        <button class="btn btn-primary" @click="popUpApprove" v-if="buttonVisible()">{{modalButton}}</button>
                     </div>
                 </div>
             </div>
@@ -67,6 +67,16 @@ export default {
         popUpCancel()
         {
             this.resetPopUp();
+        },
+
+        buttonVisible()
+        {
+            if(this.modalButton === 'hide')
+            {
+                return false;
+            } else {
+                return true;
+            }
         },
 
         //When User select confirm button of modal

@@ -59,6 +59,17 @@
                     <button type="submit" class="input-control btn btn-secondary" @click="cancelEdit" v-if="!isEdit">Cancel</button>
                     <button type="submit" class="input-control btn btn-secondary" @click="editProfile" v-if="isEdit">Edit Profile</button>
                 </form>
+                    <br><br>
+                <div class="alert alert-primary table-responsive" width="100px">
+                    <table class="table table-bordered text-centered" cellspacing="0" >
+                        <tr>
+                            <td class="tags">Total Blogs:</td>
+                            <td class="value"><router-link :to="{name: 'admin-user-blog', params: {id: id}}" tag="a" class="value">{{blogCount}} (Click Here)</router-link></td>
+                        </tr>
+                    </table>
+                </div>
+
+
             </div>
           </div>
 
@@ -82,6 +93,8 @@ export default {
             this.methodFirstname(response.data.firstname);
             this.methodLastname(response.data.lastname);
             this.methodProfilePicture(response.data.profile_picture);
+            this.commentCount = response.data.comments_count;
+            this.blogCount = response.data.blogs_count;
             if(response.data.is_vendor === 1)
             {
                 document.getElementById("is_vendor_edit").checked = true;
@@ -97,6 +110,8 @@ export default {
     data()
     {
         return {
+            commentCount: "",
+            blogCount: "",
             registrationErrors: {},
              /*We are taking here id from route params not from user vuex bcz on refresh this
               data lost but not param so we past user id from vuex on profile button route and take that value here*/
@@ -210,5 +225,21 @@ span
 }
 img{
     border-radius: 20%;
+}
+table{
+    border-radius: 5px;
+    width: 50%;
+    margin: auto;
+    float: none;
+}
+a {
+    text-decoration: none;
+    color: black;
+}
+button:hover, a:hover {
+    opacity: 0.7;
+}
+tr {
+    font-size: 25px;
 }
 </style>

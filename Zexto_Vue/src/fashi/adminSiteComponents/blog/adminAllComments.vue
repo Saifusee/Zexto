@@ -10,45 +10,48 @@
             </div>
             <div class="card-body">
               <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                  <thead>
-                    <tr>
-                      <th>Comment By</th>
-                      <th>Blog</th>
-                      <th>Comment</th>
-                      <th>Vendor Status</th>
-                      <th>Admin Status</th>
-                      <th title="Change Status of Blog">Created At</th>
-                      <th title="Change Status of Blog">Vendor Approval</th>
-                      <th title="Change Status of Blog as Admin">Admin Approval</th>
-                      <th title="Delete Blog">Delete</th>
-                    </tr>
-                  </thead>
-                  <!-- Using Transition group to add transitions where transition group tag going to replace with tbody in DOM -->
-                  <transition-group name="fade-tbody" tag="tbody" mode="out-in"> 
-                    <tr class="ttr" v-for="comment in allComments" :key="comment.id">
-                        <td><router-link tag="a" :to="{name: 'user-profile', params: {id: comment.user.id}}">{{comment.user.username}}</router-link></td>
-                        <td><a :href="$router.resolve({name: 'blog-details', params: {id: comment.blog.id}}).href">{{comment.blog.blog_title}}</a></td>
-                        <td>{{comment.comment_data}}</td>
-                        <template v-if="comment.comment_status == 'Approved'">
-                        <td style="color:green">{{comment.comment_status}}</td>
-                        </template>
-                        <template v-if="comment.comment_status == 'Disapproved'">
-                        <td style="color:red">{{comment.comment_status}}</td>
-                        </template>
-                        <template v-if="comment.comment_admin_status == 'Admin-Approved'">
-                        <td style="color:green">{{comment.comment_admin_status}}</td>
-                        </template>
-                        <template v-if="comment.comment_admin_status == 'Admin-Disapproved'">
-                        <td style="color:red">{{comment.comment_admin_status}}</td>
-                        </template>
-                        <td>{{comment.created_at}}</td>
-                        <td class="icon-user" title="Change Status"><i class="fa fa-edit" @click="commentStatus(comment.id, comment.user.username)"></i></td>
-                        <td class="icon-user" title="Change Status"><i class="fa fa-user" @click="commentAdminStatus(comment.id, comment.user.username)"></i></td>
-                        <td class="icon-user" :title="`Delete Blog`"><i class="fa fa-trash" @click="deleteComment(comment.id, comment.user.username)"></i></td>
-                    </tr>
-                </transition-group>
-                </table>
+
+                <v-client-table :data="rows" :columns="columns" :options="options">
+                     <!-- For Comment creator -->
+                      <template slot="user" slot-scope="{row}">
+                          <router-link tag="a" :to="{name: 'user-profile', params: {id: row.user.id}}">{{row.user.username}}</router-link>
+                      </template>
+                     <!-- For Comment blog -->
+                      <template slot="blog" slot-scope="{row}">
+                          <a :href="$router.resolve({name: 'blog-details', params: {id: row.blog.id}}).href">{{row.blog.blog_title}}</a>
+                      </template>
+                     <!-- For User Approval -->
+                      <template slot="comment_status" slot-scope="{row}">
+                          <template v-if="row.comment_status == 'Approved'">
+                              <span style="color:green">{{row.comment_status}}</span>
+                          </template>
+                          <template v-if="row.comment_status == 'Disapproved'">
+                              <span style="color:red">{{row.comment_status}}</span>
+                          </template>                      
+                      </template>
+                     <!-- For Admin Approval -->
+                      <template slot="comment_admin_status" slot-scope="{row}">
+                          <template v-if="row.comment_admin_status == 'Admin-Approved'">
+                              <span style="color:green">{{row.comment_admin_status}}</span>
+                          </template>
+                          <template v-if="row.comment_admin_status == 'Admin-Disapproved'">
+                              <span style="color:red">{{row.comment_admin_status}}</span>
+                          </template>                     
+                      </template>
+                     <!-- For Vendor Approval Button -->
+                      <template slot="vendor_status_approval" slot-scope="{row}">
+                          <i class="fa fa-edit" title="Change Vendor Approval Status" @click="commentStatus(row.id, row.user.username)"></i>
+                      </template>
+                     <!-- For Admin Approval Button -->
+                      <template slot="admin_status_approval" slot-scope="{row}">
+                          <i class="fa fa-user" title="Change Admin Approval Status" @click="commentAdminStatus(row.id, row.user.username)"></i>
+                      </template>
+                     <!-- For Delete Button -->
+                      <template slot="delete" slot-scope="{row}">
+                          <i class="fa fa-trash" :title="`Delete Comment`" @click="deleteComment(row.id, row.user.username)"></i>
+                      </template>
+                </v-client-table>
+                
               </div>
             </div>
           </div>
@@ -68,7 +71,44 @@ export default {
   data()
   {
     return{
-      allComments: '',
+      columns: ['user', 'blog', 'comment_data', 'comment_status', 'comment_admin_status', 'created_at', 'vendor_status_approval', 'admin_status_approval', 'delete',],
+
+      rows: [], 
+
+      options: {
+        filterByColumn: true, 
+        perPage: 10,
+        texts: {
+          loadingError: 'Oops, Something went wrong.',
+          filter: "Search",
+          filterBy: '{column}',
+          count: ''
+        },
+        filterable: ['user', 'blog', 'comment_data', 'comment_status', 'comment_admin_status', 'created_at',],
+        pagination: { chunk: 10, dropdown: false },
+        headings: {
+            user: 'Comment By',
+            blog: 'Blog Title',
+            comment_data: 'Comment',
+            comment_status: 'Vendor Approval Status',
+            comment_admin_status: 'Admin Approval Status',
+            created_at: 'Created at',
+            vendor_status_approval: 'Vendor Approval',
+            admin_status_approval: 'Admin Approval',
+            delete: 'Delete',
+        },
+        columnsDropdown: true,
+        filterAlgorithm: {
+          //Filter all Vendor Approval Status comments
+          comment_status(row, query){
+            return (row.comment_status).includes(query);
+          },
+          //Filter all Admin Approval Status comments
+          comment_admin_status(row, query){
+            return (row.comment_admin_status).includes(query);
+          }
+        },
+      }
     };
   },
 
@@ -136,7 +176,7 @@ export default {
         .then(
             response => 
             {
-                this.allComments = response.data;
+                this.rows = response.data;
             }
         )
     },
@@ -193,25 +233,7 @@ export default {
 
 
 <style scoped>
-/* Table Animation */
-.fade-tbody-enter{
-  opacity: 0;
-}
-.fade-tbody-enter-active{
-  transition: opacity 1s;
-}
-.fade-tbody-leave-active{
-  transition: opacity 1s;
-  opacity: 0;
-}
-
 /* Buttons on Hover */
-.icon-user:hover{
-  background-color: #c0c0c0;
-}
-.ttr:hover{
-  background-color: #f1f1f1;
-}
 a{
   text-decoration: none;
   color: grey;
@@ -219,7 +241,11 @@ a{
 a:hover{
   color: black;
 }
-th, td{
+
+.VueTables {
   text-align: center;
+}
+.VueTables__error {
+  color: red;
 }
 </style>

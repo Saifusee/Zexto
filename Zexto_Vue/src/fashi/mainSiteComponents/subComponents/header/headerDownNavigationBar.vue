@@ -36,7 +36,7 @@
                                 <li v-if="admin()"><a :href="$router.resolve({name: 'admin-admin-dashboard'}).href">Admin's Dashboard</a></li>
                                 <li v-if="vendor()"><a :href="$router.resolve({name: 'admin-dashboard'}).href">Vendors's Dashboard</a></li>
                                 <li><router-link :to="{name: 'shopping-cart'}" tag="a">Shopping Cart</router-link></li>
-                                <li><router-link :to="{name: 'check-out'}" tag="a">Checkout</router-link></li>
+                                <li><router-link :to="{name: 'check-out', params: {id: $store.getters.getterUserId}}" tag="a">Checkout</router-link></li>
                                 <li><router-link :to="{name: 'faq'}" tag="a">Faq</router-link></li>
                             </ul>
                         </li> 
@@ -86,6 +86,9 @@ export default {
             if(this.isVendor == 1)
             {
                 return true;
+            } else if (typeof(this.isVendor) === 'undefined' || typeof(this.isVendor) === 'null')
+            {
+                this.$router.push({name: 'login'});
             }
         },
 
@@ -94,6 +97,9 @@ export default {
             if(this.isAdmin == 1)
             {
                 return true;
+            } else if (typeof(this.isAdmin) === 'undefined' || typeof(this.isAdmin) === 'null')
+            {
+                this.$router.push({name: 'login'});
             }
         }
     }

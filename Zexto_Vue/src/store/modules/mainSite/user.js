@@ -6,8 +6,10 @@ const state = {
     userLastname: "",
     userIsAdmin: "",
     userIsVendor: "",
+    userEmailVerified: "",
     userCreatedAt: "",
     userUpdatedAt: "",
+    userProfilePicture: "",
 }
 
 const getters ={
@@ -47,6 +49,14 @@ const getters ={
     {
         return state.userUpdatedAt;
     },
+    getterUserEmailVerified: state =>
+    {
+        return state.userEmailVerified;
+    },
+    getterUserProfilePicture: state =>
+    {
+        return state.userProfilePicture;
+    },
 }
 
 const mutations = {
@@ -59,8 +69,10 @@ const mutations = {
         state.userLastname = payload.lastname;
         state.userIsAdmin = payload.is_admin;
         state.userIsVendor = payload.is_vendor;
+        state.userEmailVerified = payload.email_verified,
         state.userCreatedAt = payload.created_at;
         state.userUpdatedAt = payload.updated_at;
+        state.userProfilePicture = payload.profile_picture;
     },
 
 }

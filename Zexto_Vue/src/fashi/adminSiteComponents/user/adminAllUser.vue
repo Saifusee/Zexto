@@ -10,63 +10,73 @@
             </div>
             <div class="card-body">
               <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                  <thead>
-                    <tr>
-                      <th>Profile Picture</th>
-                      <th>Username</th>
-                      <th>E-mail</th>
-                      <th>Firstname</th>
-                      <th>Lastname</th>
-                      <th>User Status</th>
-                      <th>Account created at</th>
-                      <th title="Edit User Details">Edit</th>
-                      <th title="Vendor Status">Vendor</th>
-                      <th title="Admin Status">Admin</th>
-                      <th title="Delete User">Delete</th>
-                    </tr>
-                  </thead>
-                  <!-- Using Transition group to add transitions where transition group tag going to replace with tbody in DOM -->
-                  <transition-group name="fade-tbody" tag="tbody" mode="out-in"> 
-                    <tr class="ttr" v-for="user in allUsers" :key="user.id">
-                      <td>
-                        <router-link tag="a" :to="{name: 'user-profile', params: {id: user.id}}">
-                            <img :src="`${USER_IMAGE}thumb/${user.profile_picture}`" :alt="user.username" width="75px">
-                        </router-link>
-                      </td>
-                      <td><router-link tag="a" :to="{name: 'user-profile', params: {id: user.id}}">{{user.username}}</router-link></td>
-                      <td><router-link tag="a" :to="{name: 'user-profile', params: {id: user.id}}">{{user.email}}</router-link></td>
-                      <template v-if="user.firstname == null">
-                        <td>---Not Given---</td>
+                  <v-client-table :data="rows" :columns="columns" :options="options">
+
+                  <!-- For Profile Picture in each row. -->
+                      <template slot="profile_picture" slot-scope="{row}">
+                          <router-link tag="a" :to="{name: 'user-profile', params: {id: row.id}}">
+                              <img :src="`${USER_IMAGE}thumb/${row.profile_picture}`" :alt="row.username" width="75px" style="border-radius: 75%">
+                          </router-link> 
                       </template>
-                      <template v-else>
-                      <td><router-link tag="a" :to="{name: 'user-profile', params: {id: user.id}}">{{user.firstname}}</router-link></td>
+                  <!-- For Username in each row. -->
+                      <template slot="username" slot-scope="{row}">
+                          <router-link tag="a" :to="{name: 'user-profile', params: {id: row.id}}">{{row.username}}</router-link>
                       </template>
-                      <template v-if="user.lastname == null">
-                        <td>---Not Given---</td>
+                  <!-- For Email in each row. -->
+                      <template slot="email" slot-scope="{row}">
+                          <router-link tag="a" :to="{name: 'user-profile', params: {id: row.id}}">{{row.email}}</router-link>
                       </template>
-                      <template v-else>
-                      <td><router-link tag="a" :to="{name: 'user-profile', params: {id: user.id}}">{{user.lastname}}</router-link></td>
+                  <!-- For Firstname in each row. -->
+                      <template slot="firstname" slot-scope="{row}">
+                          <template v-if="row.firstname == null">
+                             ---Not Given---
+                          </template>
+                          <template v-else>
+                            <router-link tag="a" :to="{name: 'user-profile', params: {id: row.id}}">{{row.firstname}}</router-link>
+                          </template>                      
                       </template>
-                      <template v-if="user.is_vendor === 1">
-                            <template v-if="user.is_admin === 1">
-                                <td> <i>Admin</i></td>
-                            </template>
-                            <template v-else>
-                                <td> <i>Vendor</i></td>
-                            </template>
+                  <!-- For Firstname in each row. -->
+                      <template slot="lastname" slot-scope="{row}">
+                          <template v-if="row.lastname == null">
+                             ---Not Given---
+                          </template>
+                          <template v-else>
+                            <router-link tag="a" :to="{name: 'user-profile', params: {id: row.id}}">{{row.lastname}}</router-link>
+                          </template>                      
                       </template>
-                      <template v-else>
-                          <td> <i>User</i></td>
+                  <!-- For User Status Display in each row. -->
+                     <template slot="user_status" slot-scope="{row}">
+                              <template v-if="row.is_vendor === 1">
+                                    <template v-if="row.is_admin === 1">
+                                        <i>Admin</i>
+                                    </template>
+                                    <template v-else>
+                                        <i>Vendor</i>
+                                    </template>
+                              </template>
+                              <template v-else>
+                                  <i>User</i>
+                              </template>
+                     </template>
+                  <!-- For Vendor Status Button in each row. -->
+                      <template slot="vendor_status" slot-scope="{row}">
+                          <i class="fa fa-users" @click="vendorStatusPopUp(row.id, row.username)"></i>
                       </template>
-                      <td>{{user.created_at}}</td>
-                      <th class="icon-user" :title="`Edit ${user.username} Details`"><i class="fa fa-edit" @click="editUser(user.id)"></i></th>
-                      <td class="icon-user" title="Change user status to Buyer or Seller"><i class="fa fa-users" @click="vendorStatusPopUp(user.id, user.username)"></i></td>
-                      <td class="icon-user" title="Change user status to Admin or not"><i class="fa fa-user-circle" @click="adminStatusPopUp(user.id, user.username)"></i></td>
-                      <td class="icon-user" :title="`Delete User ${user.username}`"><i class="fa fa-trash" @click="deletePopUp(user.id, user.username)"></i></td>
-                    </tr>
-                </transition-group>
-                </table>
+                  <!-- For Admin Status Button in each row. -->
+                      <template slot="admin_status" slot-scope="{row}">
+                          <i class="fa fa-user-circle" @click="adminStatusPopUp(row.id, row.username)"></i>
+                      </template>
+                  <!-- For Edit Button in each row. -->
+                      <template slot="edit" slot-scope="{row}">
+                          <i class="fa fa-edit" @click="editUser(row.id)"></i>
+                      </template>
+                  <!-- For Delete Button in each row. -->
+                      <template slot="delete" slot-scope="{row}">
+                          <i class="fa fa-trash" @click="deletePopUp(row.id, row.username)"></i>
+                      </template>
+
+
+                  </v-client-table>
               </div>
             </div>
           </div>
@@ -87,6 +97,44 @@ export default {
   {
     return{
       allUsers: {},
+
+      columns: ['profile_picture', 'username', 'email', 'firstname', 'lastname', 'user_status', 'created_at', 'vendor_status', 'admin_status', 'edit', 'delete'],
+
+      rows: [], 
+
+      options: {
+        filterByColumn: true, 
+        perPage: 10,
+        texts: {
+          loadingError: 'Oops, Something went wrong.',
+          filter: "Search",
+          filterBy: '{column}',
+          count: ''
+        },
+        filterable: ['profile_picture', 'username', 'email', 'firstname', 'lastname', 'user_status', 'created_at',],
+        pagination: { chunk: 10, dropdown: false },
+        headings: {
+            profile_picture: 'Profile Picture',
+            username: 'Username',
+            email: 'E-mail',
+            firstname: 'Firstname',
+            lastname: 'Lastname',
+            user_status: 'User Status',
+            account_created_at: 'Account Created at',
+            edit: 'Edit User',
+            vendor_status: 'Vendor Status',
+            admin_status: 'Admin Status',
+            delete: 'Delete',
+        },
+        columnsDropdown: true,
+        filterAlgorithm: {
+          user_status(row, query){
+            return (row[0]).includes(query);
+            return console.log(row);
+          }
+        },
+
+      }
     };
   },
 
@@ -152,13 +200,12 @@ export default {
     //Sending request to get all the users.
     usersDetails()
     {
+        let userData = [];
         axios.get('users')
-        .then(
-            response => 
-            {
-                this.allUsers = response.data;
-            }
-        )
+        .then(response => this.rows = response.data)
+
+
+
     },
 
     //Call for Modal
@@ -218,18 +265,6 @@ export default {
 
 
 <style scoped>
-/* Table Animation */
-.fade-tbody-enter{
-  opacity: 0;
-}
-.fade-tbody-enter-active{
-  transition: opacity 1s;
-}
-.fade-tbody-leave-active{
-  transition: opacity 1s;
-  opacity: 0;
-}
-
 /* Buttons on Hover */
 .icon-user:hover{
   background-color: #c0c0c0;
@@ -247,4 +282,12 @@ a:hover{
 th, td{
   text-align: center;
 }
+
+.VueTables {
+  text-align: center;
+}
+.VueTables__error {
+  color: red;
+}
+
 </style>

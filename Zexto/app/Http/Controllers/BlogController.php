@@ -282,12 +282,11 @@ class BlogController extends Controller
         if($blog->blog_status == 'Approved')
         {
             $blog->blog_status = 'Disapproved';
-        } elseif 
-        ($blog->blog_status == 'Disapproved')
+        } elseif($blog->blog_status == 'Disapproved')
         {
             $blog->blog_status = 'Approved';
         }
         $blog->save();
-        return response()->json($blog, 200);
+        return response()->json("Nope", 200);
     }
 }

@@ -19,6 +19,7 @@ class UsersTableDataSeeder extends Seeder
             'password' => '@@QQ11qq',
             'is_admin' => 1,
             'profile_picture' => '0_admin.jpg',
+            'email_verified' => 1,
         ]);
         User::create([
             'username' => 'elijah',
@@ -28,6 +29,7 @@ class UsersTableDataSeeder extends Seeder
             'password' => '@@QQ11qq',
             'is_vendor' => 1,
             'profile_picture' => '0_elijah.jpg',
+            'email_verified' => 1,
         ]);
         User::create([
             'username' => 'josie',
@@ -36,6 +38,7 @@ class UsersTableDataSeeder extends Seeder
             'email' => 'josiesaltzman@tvdl.com',
             'password' => '@@QQ11qq',
             'profile_picture' => '0_josie.jpg',
+            'email_verified' => 1,
         ]);
         User::create([
             'username' => 'caroline',
@@ -44,6 +47,7 @@ class UsersTableDataSeeder extends Seeder
             'email' => 'carolineforbes@tvd.com',
             'password' => '@@QQ11qq',
             'profile_picture' => '0_caroline.jpg',
+            'email_verified' => 0,
         ]);
         User::create([
             'username' => 'stefan',
@@ -52,6 +56,7 @@ class UsersTableDataSeeder extends Seeder
             'email' => 'stefansalvatore@tvd.com',
             'password' => '@@QQ11qq',
             'profile_picture' => '0_stefan.jpg',
+            'email_verified' => 1,
         ]);
         User::create([
             'username' => 'hope',
@@ -61,6 +66,7 @@ class UsersTableDataSeeder extends Seeder
             'password' => '@@QQ11qq',
             'is_vendor' => 1,
             'profile_picture' => '0_hope.jpg',
+            'email_verified' => 1,
         ]);
         User::create([
             'username' => 'chandler',
@@ -71,6 +77,7 @@ class UsersTableDataSeeder extends Seeder
             'is_vendor' => 1,
             'is_admin' => 1,
             'profile_picture' => '0_chandler.jpg',
+            'email_verified' => 1,
         ]);
     }
 }

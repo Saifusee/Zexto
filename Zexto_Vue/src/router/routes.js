@@ -20,11 +20,13 @@ import shoppingCart from "./../fashi/mainSiteComponents/shoppingCart.vue"
 import shop from "./../fashi/mainSiteComponents/shop.vue"
 import index from "./../fashi/mainSiteComponents/index.vue"
 import notFound from "./../fashi/mainSiteComponents/404.vue"
+import emailVerified from './../fashi/mainSiteComponents/emailVerified.vue'
 
 //Importing all the child components of AdminSite to load on router-view of adminSite.vue.
 import vendorDashboard from "./../fashi/adminSiteComponents/dashboard/vendorDashboard.vue"
 import adminDashboard from "./../fashi/adminSiteComponents/dashboard/adminDashboard.vue"
 import adminAllUser from "./../fashi/adminSiteComponents/user/adminAllUser.vue"
+import adminTry from "./../fashi/adminSiteComponents/user/try.vue"
 import adminAddUser from "./../fashi/adminSiteComponents/user/adminAddUser.vue"
 import adminEditUser from "./../fashi/adminSiteComponents/user/adminEditUser.vue"
 import adminAllBlog from "./../fashi/adminSiteComponents/blog/adminAllBlog.vue"
@@ -45,18 +47,29 @@ export const routes = [
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     { path: '/admin', component: AdminSite, name: "admin", beforeEnter: (to, from, next) =>
         {
-            axios.post('me').then(resposne => resposne.data.is_admin === 1 ? next() : window.location = `${constant.DOMAIN_FRONTEND}/`)
+            axios.post('me').then(resposne => 
+                {
+                    if(resposne.data.is_admin === 1 && resposne.data.email_verified === 1)
+                    {
+                        next();
+                    } else 
+                    {
+                        window.location = `${constant.DOMAIN_FRONTEND}`;
+                    }
+                })
         },
         children:
         [
             { path: ':id/user/profile', component: userProfile, name: 'user-profile'},  //Show individual user profile.
             { path: 'user/all', component: adminAllUser, name: "admin-all-user"},  //Show table of all users of site.
+            { path: 'user/add-user', component: adminAddUser, name: "admin-add-user"},  //Show the add blog page.
             { path: 'user/:id/edit', component: adminEditUser, name: "admin-edit-user"},  //Show the edit page of user.
             { path: 'blog/all', component: adminAllBlog, name: "admin-all-blog"},  //Show the table of all the blogs on site.
             { path: 'comments/all', component: adminAllComments, name: "admin-all-comments"}, //Show all the comments on all blogs in site.
             { path: 'blog/:id/comments', component: adminBlogComments, name: "admin-blog-comments"},  //Show all the comments on particular blog to admin.
             { path: 'blog/:id/user/comments', component: adminUserComments, name: "admin-user-comments"},   //Show all the comments by a particular user.
             { path: 'admin-dashboard', component: adminDashboard, name: "admin-admin-dashboard"}, //show admin dashboard.
+            { path: 'try', component: adminTry, name: "try"}, //show admin dashboard.
 
         ]
     }, 
@@ -68,7 +81,16 @@ export const routes = [
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 { path: '/vendor', component: AdminSite, name: "vendor", beforeEnter: (to, from, next) =>
 {
-    axios.post('me').then(resposne => resposne.data.is_vendor === 1 ? next() : window.location = `${constant.DOMAIN_FRONTEND}/`)
+    axios.post('me').then(resposne => 
+    {
+        if(resposne.data.is_vendor === 1 && resposne.data.email_verified === 1)
+        {
+            next();
+        } else 
+        {
+            window.location = `${constant.DOMAIN_FRONTEND}`;
+        }
+    })
 },
 children:
 [
@@ -76,7 +98,7 @@ children:
     { path: 'blog/add-blog', component: adminAddBlog, name: "admin-add-blog"},  //Show the add blog page.
     { path: 'blog/:id/edit', component: adminEditBlog, name: "admin-edit-blog"},  //Show edit blog page.
     { path: 'blog/user/:id', component: adminUserBlog, name: "admin-user-blog"},  //Show all blogs by Logged in user
-    { path: 'blog/:id/user/comments', component: adminVendorBlogComments, name: "admin-vendor-blog-comments"},  //Show all the comments on particular blog to logged in user.
+    { path: 'blog/:id/comments', component: adminVendorBlogComments, name: "admin-user-blog-comments"},  //Show all the comments on particular blog to admin.
     { path: 'dashboard', component: vendorDashboard, name: "admin-dashboard"},  // Admin Dashboard
 
 ]
@@ -118,12 +140,16 @@ children:
             { path: 'blog', component: blog, name: "blog"},
             { path: 'blog-details/:id', component: blogDetails, name: "blog-details"},
             { path: 'blog-comments/:id', component: blogComments, name: "blog-comments"},
-            { path: 'check-out', component: checkOut, name: "check-out"},
+            { path: 'check-out/:id', component: checkOut, name: "check-out"},
             { path: 'contact', component: contact, name: "contact"},
             { path: 'faq', component: faq, name: "faq"},
             { path: 'shopping-cart', component: shoppingCart, name: "shopping-cart"},
             { path: 'shop', component: shop, name: "shop"},
             { path: '', component: index, name: "home"},
+            { path: 'verify-email/:token/verify/:id', component: emailVerified, name: "email-verified"},
+            { path: 'check-out/transaction/success', component: emailVerified, name: "transaction-success"},
+            { path: 'check-out/transaction/fail', component: emailVerified, name: "transaction-fail"},
+            { path: 'check-out/transaction/cancel', component: emailVerified, name: "transaction-cancel"},
             { path: '*', component: notFound, name: "404"},
         ]
 
