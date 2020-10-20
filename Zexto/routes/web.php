@@ -16,11 +16,7 @@ Route::get('/', function () {
 });
 
 Route::get('/test', function () {
-    return view('test');
+    return view('payu.invoice');
 });
-Route::group([
-    'prefix' => 'transaction',
-], function($router)
-{
-    Route::post('checkout/payment/{id}/payu/response', 'PaymentController@payuPaymentResponse');
-});
+
+Route::post('transaction/checkout/payment/{id}/payu/response', 'PaymentController@payuPaymentResponse');

@@ -142,7 +142,16 @@ class PaymentController extends Controller
     public function payuPaymentResponse(Request $request, $id)
     {
         $order = Order::find($id);
-        $order->payment_gateway_response = serialize($request->all());
+        $order->payment_gateway_response = serialize($request->all()); //Getting whole response of Gateway after payment to have all data.
+
+        $products =  array();
+        foreach ($order->products as $product)
+            {
+                //Setting the product details we want to show in blade
+                array_push($products, ['product_name' => $product->product_name, 'product_description' => $product->product_description, 'product_amount' => $product->pivot->product_price, 'product_quantity' => $product->pivot->product_quantity, 'products_total_price' => $product->pivot->product_total_price]);
+            }
+
+        $user = User::find($order->user_id);  //Getting all details of user
 
         $status = $request->status;
         $firstname = $request->firstname;
@@ -173,6 +182,7 @@ class PaymentController extends Controller
                        if ($status == "failure")
                        {
                         $title = "Transaction Fail!";
+                        $sub_title = "No Amount had been deducted and if deducted will be refunded soon.";
                         $class = "alert alert-danger";
                         $order->payment_status = static::PAYMENT_FAIL;    //Getting this constant values from parent class Controller.php
                         $order->order_status = static::ORDER_FAIL;   //Getting this constant values from parent class Controller.php
@@ -180,16 +190,19 @@ class PaymentController extends Controller
                        } elseif ($status == "success")
                        {
                         $title = "Transaction Successful!";
+                        $sub_title = "Your order will shipped soon, Keep order id with you for keeping track of your order.!";
                         $class = "alert alert-success";
                         $order->payment_status = static::PAYMENT_SUCCESS;
                         $order->order_status = static::ORDER_YET_TO_DELIVERED;
                        } else
                        {
                         $title = "Invalid Transaction, Please try again.";
+                        $sub_title = "No Amount had been deducted and if deducted will be refunded soon.";
                        }
                        if($request->unmappedstatus == "userCancelled" || $request->field8 == 'GV00004 User pressed cancel button' || $request->field9 == "Cancelled by user")
                        {
                         $title = "Transaction Cancel!";
+                        $sub_title = "No Amount had been deducted and if deducted will be refunded soon.";
                         $class = "alert alert-danger";
                         $order->payment_status = static::PAYMENT_CANCEL;
                         $order->order_status = static::ORDER_CANCEL;
@@ -197,10 +210,27 @@ class PaymentController extends Controller
                        }
                         $order->payment_gateway_txnid = $request->payuMoneyId;
                         $order->order_completed_at = Carbon::now();
-                        $data = ['class' => $class, 'status' => $status, 'firstname' => $firstname, 'order_id' => $order->id,  'email' => $email, 'debit_amount' => $net_amount_debit, 'txnid' => $txnid, 'productinfo' => $productinfo,];
+                        $data = [
+                                'title' => $title,
+                                'sub_title' => $sub_title,
+                                'class' => $class,
+                                'firstname' => $firstname,
+                                'lastname' => $user->lastname,
+                                'email' => $email,
+                                'phone' => $phone, 
+                                'mode' => $mode,
+                                'address' => $order->shipping_address,
+                                'zipcode' => $order->shipping_zipcode, 
+                                'status' => $status, 
+                                'order_id' => $order->id, 
+                                'order_created_at' => $order->created_at, 
+                                'txnid' => $txnid, 
+                                'debit_amount' => $net_amount_debit, 
+                                'products' => $products,
+                                ];
                    }
         $order->save();
-        return view('payu.response')->with(['frontend_url'=> env('FRONTEND_URL'), 'title' => $title, 'data' => $data]);
+        return view('payu.invoice')->with(['frontend_url'=> env('FRONTEND_URL'), 'backend_url'=> env('BACKEND_URL'), 'data' => $data]);
     }
 
 }

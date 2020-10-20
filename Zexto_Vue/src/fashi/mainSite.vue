@@ -86,8 +86,6 @@ export default {
               this.userEmail = response.data.email;
               //Setting the User Details on user.js of vuex
               this.$store.dispatch('actionUserDetails', response.data);
-
-
           })
       }
 

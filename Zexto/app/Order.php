@@ -19,6 +19,6 @@ class Order extends Model
     {
         //->using Directing to model for pivot table if needed which implements on pivot class
         //->withPivot directing to some columns which hold details other than pivot columns and include those column in pivot table functionality.
-        return $this->belongsToMany('App\Product', 'order_product', 'order_id', 'product_id')->using('App\OrderProduct')->withPivot('current_product_amount', 'product_quantity', 'product_total_price');
+        return $this->belongsToMany('App\Product')->using('App\OrderProduct')->withPivot('product_price', 'product_quantity', 'product_total_price');
     }
 }
