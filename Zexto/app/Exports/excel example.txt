@@ -1,0 +1,881 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request; 
+use App\Models\VendorOffering;
+use App\Models\VendorStones;
+use App\Models\VendorStock;
+use App\Models\RecentActivity;
+use App\Models\AssortmentItem;
+use App\Models\StockOutItem;
+use App\Models\FinalBillItem;
+use Carbon\Carbon;
+use App\User;
+use Session;
+use Excel;
+
+class ReportController extends Controller
+{
+    /*
+    |--------------------------------------------------------------------------
+    | Report Controller
+    |--------------------------------------------------------------------------
+    |
+    | This controller is responsible for list reports.
+    |
+    */    
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function vendors(Request $request)
+    {
+        $this->data['title'] = MENU_REPORTS_VENDORS;
+        $this->getVendorsSearchParam($request);  
+        $query = $this->getVendorsSearchQuery();
+        $perPage = $this->data['rpt_vendors_perpage'];        
+        $this->data['users'] = $query->sortable(['name' => 'asc'])->paginate($perPage);
+        return view('admin.reports.vendors', $this->data);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function offers(Request $request)
+    {
+        $this->data['title'] = MENU_REPORTS_OFFERS; 
+        $this->getOffersSearchParam($request);  
+        $query = $this->getOffersSearchQuery();  
+        $perPage = $this->data['rpt_offers_perpage'];
+        $this->data['offers'] = $query->sortable(['created_at' => 'desc'])->paginate($perPage);
+        return view('admin.reports.offers', $this->data);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function rates(Request $request)
+    {
+        $this->data['title'] = MENU_REPORTS_RATES; 
+        $this->getRatesSearchParam($request);  
+        $query = $this->getRatesSearchQuery();  
+        $perPage = $this->data['rpt_rates_perpage'];
+        $this->data['rates'] = $query->sortable(['gemstone' => 'asc'])->paginate($perPage);
+        return view('admin.reports.rates', $this->data);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function activities(Request $request)
+    {
+        $this->data['title'] = MENU_REPORTS_ACTIVITIES; 
+        $this->getActivitiesSearchParam($request);  
+        $query = $this->getActivitiesSearchQuery();  
+        $perPage = $this->data['rpt_activities_perpage'];
+        $this->data['activities'] = $query->sortable(['created_at' => 'desc'])->paginate($perPage);
+        return view('admin.reports.activities', $this->data);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function rankings(Request $request)
+    {
+        $this->data['title'] = MENU_REPORTS_RANKING; 
+        $this->getRankingsSearchParam($request);  
+        $query = $this->getRankingsSearchQuery();  
+        $perPage = $this->data['rpt_rankings_perpage'];
+        $this->data['rankings'] = $query->sortable(['updated_at' => 'desc'])->paginate($perPage);
+        return view('admin.reports.rankings', $this->data);
+    }
+    
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function transactions(Request $request)
+    {
+        $this->data['title'] = MENU_REPORTS_TRANSACTIONS; 
+        $this->getTransactionsSearchParam($request);
+        if ($this->data['rpt_transactions_type'] > 0) {
+            $query = $this->getTransactionsSearchQuery();
+            $perPage = $this->data['rpt_transactions_perpage'];
+            $this->data['transactions'] = $query->sortable(['gemstone' => 'asc'])->paginate($perPage);
+        } else {
+            $this->data['transactions'] = [];
+        }        
+        return view('admin.reports.transactions', $this->data);
+    }
+
+    /**
+     * Export a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function vendorsExport(Request $request)
+    {
+        $this->getVendorsSearchParam($request);  
+        $query = $this->getVendorsSearchQuery();        
+        $data = $query->get();
+        $this->data['users'] = $data;
+        $outputAs = 'xls';
+        $fileName = 'vendors-report'.date('Y-m-d His');
+        return Excel::create($fileName, function($excel) use ($data) {
+            $excel->sheet('mySheet', function($sheet) use ($data){
+                $totalRecords = $data->count();
+                $sheet->loadView('admin.reports.partials.vendors_list',$this->data);
+                $sheet->setBorder('A1:Z'.($totalRecords+1), 'thin');
+                $sheet->row(1, function($row) {                
+                    $row->setBackground('#5dc3e7');                
+                });
+                $sheet->setOrientation('landscape');
+            });
+        })->download($outputAs);       
+    }
+
+    /**
+     * Export a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function offersExport(Request $request)
+    {        
+        $this->getOffersSearchParam($request);  
+        $query = $this->getOffersSearchQuery();
+        $data = $query->get();
+        $this->data['offers'] = $data;
+        $outputAs = 'xls';
+        $fileName = 'vendors-offers-report'.date('Y-m-d His');
+        return Excel::create($fileName, function($excel) use ($data) {
+            $excel->sheet('mySheet', function($sheet) use ($data){
+                $totalRecords = $data->count();
+                $sheet->loadView('admin.reports.partials.offers_list',$this->data);
+                $sheet->setBorder('A1:P'.($totalRecords+1), 'thin');
+                $sheet->row(1, function($row) {                
+                    $row->setBackground('#5dc3e7');                
+                });
+                $sheet->setOrientation('landscape');
+            });
+        })->download($outputAs);       
+    }
+
+    /**
+     * Export a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function ratesExport(Request $request)
+    {
+        $this->getRatesSearchParam($request);
+        $query = $this->getRatesSearchQuery();        
+        $data = $query->get();
+        $this->data['rates'] = $data;
+        $outputAs = 'xls';
+        $fileName = 'vendors-rates-report'.date('Y-m-d His');
+        return Excel::create($fileName, function($excel) use ($data) {
+            $excel->sheet('mySheet', function($sheet) use ($data){
+                $totalRecords = $data->count();
+                $sheet->loadView('admin.reports.partials.rates_list',$this->data);
+                $sheet->setBorder('A1:M'.($totalRecords+1), 'thin');
+                $sheet->row(1, function($row) {                
+                    $row->setBackground('#5dc3e7');                
+                });
+                $sheet->setOrientation('landscape');
+            });
+        })->download($outputAs);       
+    }
+
+    /**
+     * Export a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function activitiesExport(Request $request)
+    {
+        $this->getActivitiesSearchParam($request);
+        $query = $this->getActivitiesSearchQuery();        
+        $data = $query->get();
+        $this->data['activities'] = $data;
+        $outputAs = 'xls';
+        $fileName = 'vendors-activities-report'.date('Y-m-d His');
+        return Excel::create($fileName, function($excel) use ($data) {
+            $excel->sheet('mySheet', function($sheet) use ($data){
+                $totalRecords = $data->count();
+                $sheet->loadView('admin.reports.partials.activities_list',$this->data);
+                $sheet->setBorder('A1:E'.($totalRecords+1), 'thin');
+                $sheet->row(1, function($row) {                
+                    $row->setBackground('#5dc3e7');                
+                });
+                $sheet->setOrientation('landscape');
+            });
+        })->download($outputAs);       
+    }
+
+    /**
+     * Export a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function rankingsExport(Request $request)
+    {
+        $this->getRankingsSearchParam($request);  
+        $query = $this->getRankingsSearchQuery();
+        $data = $query->get();
+        $this->data['rankings'] = $data;
+        $outputAs = 'xls';
+        $fileName = 'vendors-rankings-report'.date('Y-m-d His');
+        return Excel::create($fileName, function($excel) use ($data) {
+            $excel->sheet('mySheet', function($sheet) use ($data){
+                $totalRecords = $data->count();
+                $sheet->loadView('admin.reports.partials.rankings_list',$this->data);
+                $sheet->setBorder('A1:M'.($totalRecords+1), 'thin');
+                $sheet->row(1, function($row) {                
+                    $row->setBackground('#5dc3e7');                
+                });
+                $sheet->setOrientation('landscape');
+            });
+        })->download($outputAs);       
+    }
+
+    /**
+     * Export a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function transactionsExport(Request $request)
+    {        
+        $this->getTransactionsSearchParam($request);        
+        $query = $this->getTransactionsSearchQuery();
+        if ($this->data['rpt_transactions_type'] == 1) {
+            $borderTo = 'AF';
+        } elseif ($this->data['rpt_transactions_type'] == 2) {
+            $borderTo = 'AC';
+        } else {
+            $borderTo = 'AE';
+        }
+        $data = $query->get();
+        $this->data['transactions'] = $data;
+        $outputAs = 'xls';
+        $fileName = 'transactions-report'.date('Y-m-d His');
+        return Excel::create($fileName, function($excel) use ($data, $borderTo) {
+            $excel->sheet('mySheet', function($sheet) use ($data, $borderTo){
+                $totalRecords = $data->count();
+                $sheet->loadView('admin.reports.partials.transactions_list',$this->data);
+                $sheet->setBorder('A1:'.$borderTo.($totalRecords+1), 'thin');
+                $sheet->row(1, function($row) {                
+                    $row->setBackground('#5dc3e7');                
+                });
+                $sheet->setOrientation('landscape');
+            });
+        })->download($outputAs);       
+    }
+
+    /**
+     * Get search params.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    public function getVendorsSearchParam($request)
+    {
+        if ($request->has('seeall')) {
+            session([
+            'rpt_vendors_kyc' => '',
+            'rpt_vendors_profile' => '',
+            'rpt_vendors_stone' => 0,
+            'rpt_vendors_contracted_stone' => 0,
+            'rpt_vendors_rate' => 0,
+            'rpt_vendors_signup' => 0,
+            'rpt_vendors_location' => 0,            
+            'rpt_vendors_contracted' => 0,
+            'rpt_vendors_perpage' => PAGE_SIZE,
+            ]);
+        }
+        $this->getSetParam($request, 'rpt_vendors_kyc','');
+        $this->getSetParam($request, 'rpt_vendors_profile','');
+        $this->getSetParam($request, 'rpt_vendors_stone');
+        $this->getSetParam($request, 'rpt_vendors_contracted_stone');
+        $this->getSetParam($request, 'rpt_vendors_rate');
+        $this->getSetParam($request, 'rpt_vendors_signup');
+        $this->getSetParam($request, 'rpt_vendors_location');        
+        $this->getSetParam($request, 'rpt_vendors_contracted');
+        $this->getSetParam($request, 'rpt_vendors_perpage',PAGE_SIZE);
+    }
+    
+    /**
+     * Get search params for offers.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    public function getOffersSearchParam($request)
+    {
+        if ($request->has('seeall')) {
+            session([
+            'rpt_offers_id' => '',
+            'rpt_offers_vendor' => 0,
+            'rpt_offers_stone' => 0,
+            'rpt_offers_cut' => 0,
+            'rpt_offers_shape' => 0,
+            'rpt_offers_size' => 0,
+            'rpt_offers_grade' => 0,
+            'rpt_offers_status' => 0,
+            'rpt_offers_location' => 0,
+            'rpt_offers_perpage' => PAGE_SIZE,
+            ]);
+        }
+        $this->getSetParam($request, 'rpt_offers_id','');
+        $this->getSetParam($request, 'rpt_offers_vendor');
+        $this->getSetParam($request, 'rpt_offers_stone');
+        $this->getSetParam($request, 'rpt_offers_cut');
+        $this->getSetParam($request, 'rpt_offers_shape');
+        $this->getSetParam($request, 'rpt_offers_size');
+        $this->getSetParam($request, 'rpt_offers_grade');
+        $this->getSetParam($request, 'rpt_offers_status');
+        $this->getSetParam($request, 'rpt_offers_location');
+        $this->getSetParam($request, 'rpt_offers_perpage',PAGE_SIZE);
+        
+    }
+
+
+    /**
+     * Get search params for rates.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    public function getRatesSearchParam($request)
+    {
+        if ($request->has('seeall')) {
+            session([            
+            'rpt_rates_vendor' => 0,
+            'rpt_rates_stone' => 0,
+            'rpt_rates_cut' => 0,
+            'rpt_rates_shape' => 0,
+            'rpt_rates_size' => 0,
+            'rpt_rates_grade' => 0,            
+            'rpt_rates_perpage' => PAGE_SIZE,            
+            ]);
+        }        
+        $this->getSetParam($request, 'rpt_rates_vendor');
+        $this->getSetParam($request, 'rpt_rates_stone');
+        $this->getSetParam($request, 'rpt_rates_cut');
+        $this->getSetParam($request, 'rpt_rates_shape');
+        $this->getSetParam($request, 'rpt_rates_size');
+        $this->getSetParam($request, 'rpt_rates_grade');        
+        $this->getSetParam($request, 'rpt_rates_perpage',PAGE_SIZE);
+        
+    }
+
+    /**
+     * Get search params for activities.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    public function getActivitiesSearchParam($request)
+    {
+        $from = Carbon::now()->subDays(2)->format(SIMPLE_DATE);
+        $to = Carbon::now()->format(SIMPLE_DATE);
+
+        if ($request->has('seeall')) {
+            session([            
+            'rpt_activities_name' => '',
+            'rpt_activities_role' => 0,
+            'rpt_activities_from' => $from,
+            'rpt_activities_to' => $to,
+            'rpt_activities_perpage' => PAGE_SIZE,            
+            ]);
+        }
+        $this->getSetParam($request, 'rpt_activities_name','');
+        $this->getSetParam($request, 'rpt_activities_role');
+        $this->getSetParam($request, 'rpt_activities_from',$from);
+        $this->getSetParam($request, 'rpt_activities_to',$to);
+        $this->getSetParam($request, 'rpt_activities_perpage',PAGE_SIZE);
+        
+    }
+
+    /**
+     * Get search params for Rankings.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    public function getRankingsSearchParam($request)
+    {
+        if ($request->has('seeall')) {
+            session([            
+            'rpt_rankings_vendor' => 0,
+            'rpt_rankings_stone' => 0,
+            'rpt_rankings_cut' => 0,
+            'rpt_rankings_shape' => 0,
+            'rpt_rankings_size' => 0,
+            'rpt_rankings_grade' => 0,            
+            'rpt_rankings_perpage' => PAGE_SIZE,            
+            ]);
+        }        
+        $this->getSetParam($request, 'rpt_rankings_vendor');
+        $this->getSetParam($request, 'rpt_rankings_stone');
+        $this->getSetParam($request, 'rpt_rankings_cut');
+        $this->getSetParam($request, 'rpt_rankings_shape');
+        $this->getSetParam($request, 'rpt_rankings_size');
+        $this->getSetParam($request, 'rpt_rankings_grade');        
+        $this->getSetParam($request, 'rpt_rankings_perpage',PAGE_SIZE);
+        
+    }
+    
+    /**
+     * Get search params for transactions.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    public function getTransactionsSearchParam($request)
+    {
+        if ($request->has('seeall')) {
+            session([
+            'rpt_transactions_type' => 0,
+            'rpt_transactions_keyword' => '',            
+            'rpt_transactions_vendor' => 0,
+            'rpt_transactions_buyer' => 0,
+            'rpt_transactions_super_buyer' => 0,
+            'rpt_transactions_stone' => 0,
+            'rpt_transactions_cut' => 0,
+            'rpt_transactions_shape' => 0,
+            'rpt_transactions_size' => 0,
+            'rpt_transactions_grade' => 0,
+            'rpt_transactions_payment' => '',            
+            'rpt_transactions_perpage' => PAGE_SIZE,
+            ]);
+        }        
+        $this->getSetParam($request, 'rpt_transactions_type');
+        $this->getSetParam($request, 'rpt_transactions_keyword','');        
+        $this->getSetParam($request, 'rpt_transactions_vendor');
+        $this->getSetParam($request, 'rpt_transactions_buyer');
+        $this->getSetParam($request, 'rpt_transactions_super_buyer');
+        $this->getSetParam($request, 'rpt_transactions_stone');
+        $this->getSetParam($request, 'rpt_transactions_cut');
+        $this->getSetParam($request, 'rpt_transactions_shape');
+        $this->getSetParam($request, 'rpt_transactions_size');
+        $this->getSetParam($request, 'rpt_transactions_grade');
+        $this->getSetParam($request, 'rpt_transactions_payment','');        
+        $this->getSetParam($request, 'rpt_transactions_perpage',PAGE_SIZE);
+        
+    }    
+
+    /**
+     * Get search query.
+     *
+     * @return void
+     */
+    public function getVendorsSearchQuery()
+    {
+        $matchThese = array();       
+        
+        if ($this->data['rpt_vendors_profile'] != "") {
+            $matchThese['activated'] = $this->data['rpt_vendors_profile'];
+        }
+
+        $query = User::where($matchThese);
+
+        if ($this->data['rpt_vendors_location'] > 0) {
+            $rptVendorsLocation = $this->data['rpt_vendors_location'];
+            $query->whereHas('kycDetails', function($q) use($rptVendorsLocation) {                
+                $q->where('permanent_location',$rptVendorsLocation);                
+            });
+        }
+
+
+        if ($this->data['rpt_vendors_kyc'] != "") {
+            $rptVendorsKyc = $this->data['rpt_vendors_kyc'];
+            $query->whereHas('kycDetails', function($q) use($rptVendorsKyc) {
+                if ($rptVendorsKyc == 1) {
+                    $q->where('status',DROPDOWN_KYC_STATUS_APPROVED);
+                } else {
+                    $q->where('status','!=',DROPDOWN_KYC_STATUS_APPROVED);
+                }
+                
+            });
+        }
+        
+        if ($this->data['rpt_vendors_rate'] > 0) {
+            if ($this->data['rpt_vendors_rate'] == 1) {
+                $query->has('hasStoneRate');
+            } else {
+                $query->doesnthave('hasStoneRate');
+            }
+        }
+
+        if ($this->data['rpt_vendors_contracted'] > 0) {
+            if ($this->data['rpt_vendors_contracted'] == 1) {
+                $query->has('hasRunningAgreement');
+            } else {
+                $query->doesnthave('hasRunningAgreement');
+            }
+        }
+
+        if ($this->data['rpt_vendors_stone'] > 0) {
+            $userStones = $this->data['rpt_vendors_stone'];
+            $query->whereHas('gemstones', function($q) use($userStones) {
+                $q->whereIn('stone_id',$userStones);
+            });            
+        }
+
+        if ($this->data['rpt_vendors_contracted_stone'] > 0) {
+            $contractedStones = $this->data['rpt_vendors_contracted_stone'];            
+            $query->whereHas('runningAgreements.agreementStones.stoneGroup', function($q) use($contractedStones) {
+                $q->whereIn('stone_id',$contractedStones);
+            });            
+        }
+
+
+        if ($this->data['rpt_vendors_signup'] > 0) {
+            $kycStatus = $this->data['rpt_vendors_signup'];
+            $query->whereHas('kycDetails', function($q) use($kycStatus) {
+                $q->where('status',$kycStatus);
+            });            
+        }
+
+               
+
+        $query->whereHas('roles', function($q){$q->where('roles.name', ROLE_VENDOR);});      
+        return $query;
+    }
+
+    /**
+     * Get search query.
+     *
+     * @return void
+     */
+    public function getOffersSearchQuery()
+    {
+        $matchThese = array();
+        
+        if ($this->data['rpt_offers_vendor'] > 0) {
+            $matchThese['vendor_id'] = $this->data['rpt_offers_vendor'];            
+        }
+
+        if ($this->data['rpt_offers_status'] > 0) {
+            $matchThese['status'] = $this->data['rpt_offers_status'];            
+        }
+
+        if ($this->data['rpt_offers_location'] > 0) {
+            $matchThese['location_id'] = $this->data['rpt_offers_location'];            
+        }
+        $query = VendorOffering::where($matchThese);
+
+        if ($this->data['rpt_offers_id'] != "") {
+            $query->where('offer_id', 'like', '%'.$this->data['rpt_offers_id'].'%');
+        }
+
+        if ($this->data['rpt_offers_stone'] > 0) {
+            $offerStones = $this->data['rpt_offers_stone'];
+            $query->whereHas('stoneGroup', function($q) use($offerStones) {
+                $q->whereIn('stone_id',$offerStones);
+            });            
+        }
+
+        if ($this->data['rpt_offers_cut'] > 0) {
+            $offerCuts = $this->data['rpt_offers_cut'];
+            $query->whereHas('stoneGroup', function($q) use($offerCuts) {
+                $q->whereIn('cut_id',$offerCuts);
+            });            
+        }
+
+        if ($this->data['rpt_offers_shape'] > 0) {
+            $offerShapes = $this->data['rpt_offers_shape'];
+            $query->whereHas('stoneGroup', function($q) use($offerShapes) {
+                $q->whereIn('shape_id',$offerShapes);
+            });            
+        }
+
+        if ($this->data['rpt_offers_size'] > 0) {
+            $offerSizes = $this->data['rpt_offers_size'];
+            $query->whereHas('stoneGroup', function($q) use($offerSizes) {
+                $q->whereIn('size_id',$offerSizes);
+            });            
+        }
+
+        if ($this->data['rpt_offers_grade'] > 0) {
+            $offerGrades = $this->data['rpt_offers_grade'];
+            $query->whereHas('stoneGroup', function($q) use($offerGrades) {
+                $q->whereIn('grade_id',$offerGrades);
+            });            
+        }
+        
+        return $query;
+    }
+
+    /**
+     * Get search query.
+     *
+     * @return void
+     */
+    public function getRatesSearchQuery()
+    {
+        $matchThese = array();
+        
+        if ($this->data['rpt_rates_vendor'] > 0) {
+            $matchThese['vendor_id'] = $this->data['rpt_rates_vendor'];            
+        }
+
+        $query = VendorStones::where($matchThese); 
+
+        if ($this->data['rpt_rates_stone'] > 0) {
+            $rateStones = $this->data['rpt_rates_stone'];
+            $query->whereHas('stoneGroup', function($q) use($rateStones) {
+                $q->whereIn('stone_id',$rateStones);
+            });            
+        }
+
+        if ($this->data['rpt_rates_cut'] > 0) {
+            $rateCuts = $this->data['rpt_rates_cut'];
+            $query->whereHas('stoneGroup', function($q) use($rateCuts) {
+                $q->whereIn('cut_id',$rateCuts);
+            });            
+        }
+
+        if ($this->data['rpt_rates_shape'] > 0) {
+            $rateShapes = $this->data['rpt_rates_shape'];
+            $query->whereHas('stoneGroup', function($q) use($rateShapes) {
+                $q->whereIn('shape_id',$rateShapes);
+            });            
+        }
+
+        if ($this->data['rpt_rates_size'] > 0) {
+            $rateSizes = $this->data['rpt_rates_size'];
+            $query->whereHas('stoneGroup', function($q) use($rateSizes) {
+                $q->whereIn('size_id',$rateSizes);
+            });            
+        }
+
+        if ($this->data['rpt_rates_grade'] > 0) {
+            $rateGrades = $this->data['rpt_rates_grade'];
+            $query->whereHas('stoneGroup', function($q) use($rateGrades) {
+                $q->whereIn('grade_id',$rateGrades);
+            });            
+        }
+        
+        return $query;
+    }
+
+    /**
+     * Get search query.
+     *
+     * @return void
+     */
+    public function getActivitiesSearchQuery()
+    {
+        $matchThese = array();
+        $query = RecentActivity::where($matchThese);
+        
+        if ($this->data['rpt_activities_role'] > 0) {
+            $userRole = $this->data['rpt_activities_role'];
+            $query->whereHas('user.userroles', function ($q) use ($userRole) {
+                $q->where('role_id', $userRole);                
+            });
+        }
+
+        if ($this->data['rpt_activities_name'] != "") {
+            $activitiesName = $this->data['rpt_activities_name'];
+            $query->whereHas('user', function($q) use($activitiesName) {                
+                $q->where('name', 'like', '%'.$activitiesName.'%');
+            });            
+        }
+
+        if (!empty($this->data['rpt_activities_from'])) {
+            $query->whereDate(TBL_RECENT_ACTIVITIES.'.created_at', '>=', date('Y-m-d',strtotime($this->data['rpt_activities_from'])));
+        }
+        if (!empty($this->data['rpt_activities_to'])) {
+            $query->whereDate(TBL_RECENT_ACTIVITIES.'.created_at', '<=', date('Y-m-d',strtotime($this->data['rpt_activities_to'])));
+        }
+        return $query;
+    }
+
+    /**
+     * Get search query.
+     *
+     * @return void
+     */
+    public function getRankingsSearchQuery()
+    {
+        $matchThese = array();
+        
+        if ($this->data['rpt_rankings_vendor'] > 0) {
+            $matchThese['vendor_id'] = $this->data['rpt_rankings_vendor'];            
+        }
+
+        $query = VendorStock::where($matchThese); 
+
+        if ($this->data['rpt_rankings_stone'] > 0) {
+            $rankingsStones = $this->data['rpt_rankings_stone'];
+            $query->whereHas('stoneGroup', function($q) use($rankingsStones) {
+                $q->whereIn('stone_id',$rankingsStones);
+            });            
+        }
+
+        if ($this->data['rpt_rankings_cut'] > 0) {
+            $rankingsCuts = $this->data['rpt_rankings_cut'];
+            $query->whereHas('stoneGroup', function($q) use($rankingsCuts) {
+                $q->whereIn('cut_id',$rankingsCuts);
+            });            
+        }
+
+        if ($this->data['rpt_rankings_shape'] > 0) {
+            $rankingsShapes = $this->data['rpt_rankings_shape'];
+            $query->whereHas('stoneGroup', function($q) use($rankingsShapes) {
+                $q->whereIn('shape_id',$rankingsShapes);
+            });            
+        }
+
+        if ($this->data['rpt_rankings_size'] > 0) {
+            $rankingsSizes = $this->data['rpt_rankings_size'];
+            $query->whereHas('stoneGroup', function($q) use($rankingsSizes) {
+                $q->whereIn('size_id',$rankingsSizes);
+            });            
+        }
+
+        if ($this->data['rpt_rankings_grade'] > 0) {
+            $rankingsGrades = $this->data['rpt_rankings_grade'];
+            $query->whereHas('stoneGroup', function($q) use($rankingsGrades) {
+                $q->whereIn('grade_id',$rankingsGrades);
+            });            
+        }
+        
+        return $query;
+    }
+
+    /**
+     * Get search query.
+     *
+     * @return void
+     */
+    public function getTransactionsSearchQuery()
+    {
+        $matchThese = array();        
+
+        if ($this->data['rpt_transactions_type'] == 1) {
+            $query = AssortmentItem::where($matchThese);
+        } elseif ($this->data['rpt_transactions_type'] == 2) {
+            $query = StockOutItem::where($matchThese);
+        } else {
+            $query = FinalBillItem::where($matchThese);
+        }
+
+        //if stock_in_id is null then stock in not generated
+        $query->whereHas('parentDetails', function($q) {
+            if ($this->data['rpt_transactions_type'] == 1) {
+                $id_field = 'stock_in_id';                
+            } elseif ($this->data['rpt_transactions_type'] == 2) {
+                $id_field = 'stock_out_id';
+            } else {
+                $id_field = 'final_bill_id';                
+            }
+
+            $q->whereNotNull($id_field);
+            
+            if ($this->data['rpt_transactions_keyword'] != "") {
+                $q->where($id_field, 'like', '%'.$this->data['rpt_transactions_keyword'].'%');
+            }
+            if ($this->data['rpt_transactions_vendor'] > 0) {
+                $q->where('vendor_id', $this->data['rpt_transactions_vendor']);
+            }
+        });          
+        
+
+        if ($this->data['rpt_transactions_buyer'] > 0) {
+            $query->where(function ($query2) {
+                $query2->whereHas('appliedDeal.applyItem.poItem.assignedBuyer', function ($q) {
+                    $q->where('id', $this->data['rpt_transactions_buyer']);
+                })->orWhereHas('appliedDemand.applyItem.poItem.assignedBuyer', function($q) {
+                    $q->where('id', $this->data['rpt_transactions_buyer']);
+                });
+            });
+        }
+
+        if ($this->data['rpt_transactions_super_buyer'] > 0) {
+            $query->where(function ($query2) {
+                $query2->whereHas('appliedDeal.applyItem.poItem.getSuperBuyer', function ($q) {
+                    $q->where('id', $this->data['rpt_transactions_super_buyer']);
+                })->orWhereHas('appliedDemand.applyItem.poItem.getSuperBuyer', function($q) {
+                    $q->where('id', $this->data['rpt_transactions_super_buyer']);
+                });
+            });
+        }
+        
+        if ($this->data['rpt_transactions_payment'] != '') {
+            $query->where(function ($query2) {
+                $query2->whereHas('appliedDeal', function ($q) {
+                    $q->where('billing_status', $this->data['rpt_transactions_payment']);
+                })->orWhereHas('appliedDemand', function($q) {
+                    $q->where('billing_status', $this->data['rpt_transactions_payment']);
+                });
+            });
+        }
+
+        if ( $this->data['rpt_transactions_stone'] > 0 || $this->data['rpt_transactions_cut'] > 0 || $this->data['rpt_transactions_shape'] > 0 || $this->data['rpt_transactions_size'] > 0 || $this->data['rpt_transactions_grade'] > 0 ) {
+            $query->where(function ($query2) {
+                $query2->whereHas('appliedDeal.applyItem.poItem.stoneGroup', function ($q) {
+                    if ($this->data['rpt_transactions_stone'] > 0) {
+                        $q->whereIn('stone_id', $this->data['rpt_transactions_stone']);
+                    }
+                    if ($this->data['rpt_transactions_cut'] > 0) {
+                        $q->whereIn('cut_id', $this->data['rpt_transactions_cut']);
+                    }
+                    if ($this->data['rpt_transactions_shape'] > 0) {
+                        $q->whereIn('shape_id', $this->data['rpt_transactions_shape']);
+                    }
+                    if ($this->data['rpt_transactions_size'] > 0) {
+                        $q->whereIn('size_id', $this->data['rpt_transactions_size']);
+                    }
+                    if ($this->data['rpt_transactions_grade'] > 0) {
+                        $q->whereIn('grade_id', $this->data['rpt_transactions_grade']);
+                    }
+                })->orWhereHas('appliedDemand.applyItem.poItem.stoneGroup', function ($q) {
+                    if ($this->data['rpt_transactions_stone'] > 0) {
+                        $q->whereIn('stone_id', $this->data['rpt_transactions_stone']);
+                    }
+                    if ($this->data['rpt_transactions_cut'] > 0) {
+                        $q->whereIn('cut_id', $this->data['rpt_transactions_cut']);
+                    }
+                    if ($this->data['rpt_transactions_shape'] > 0) {
+                        $q->whereIn('shape_id', $this->data['rpt_transactions_shape']);
+                    }
+                    if ($this->data['rpt_transactions_size'] > 0) {
+                        $q->whereIn('size_id', $this->data['rpt_transactions_size']);
+                    }
+                    if ($this->data['rpt_transactions_grade'] > 0) {
+                        $q->whereIn('grade_id', $this->data['rpt_transactions_grade']);
+                    }
+                });
+            });
+        }
+        
+        return $query;
+    }
+}

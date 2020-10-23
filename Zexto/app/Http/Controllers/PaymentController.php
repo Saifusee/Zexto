@@ -9,6 +9,9 @@ use App\Order;
 use App\Product;
 use App\OrderProduct;
 use Carbon\Carbon;
+use App\Exports\InvoicesExport;
+use Excel;
+use PDF;
 
 class PaymentController extends Controller
 {
@@ -230,7 +233,8 @@ class PaymentController extends Controller
                                 ];
                    }
         $order->save();
-        return view('payu.invoice')->with(['frontend_url'=> env('FRONTEND_URL'), 'backend_url'=> env('BACKEND_URL'), 'data' => $data]);
-    }
 
+            return view('payu.invoice')->with(['frontend_url'=> env('FRONTEND_URL'), 'backend_url'=> env('BACKEND_URL'), 'data' => $data]);
+
+    }
 }

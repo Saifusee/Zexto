@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zexto Transactions</title>
-    <link rel="stylesheet" href="{{$frontend_url}}src/fashi/css/bootstrap.min.css" type="text/css"/>
+    <link rel="stylesheet" href="{{$frontend_url}}/src/fashi/css/bootstrap.min.css" type="text/css"/>
     <link rel="stylesheet" href="{{$backend_url}}css/invoice.css" type="text/css"/>
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 </head>

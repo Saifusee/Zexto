@@ -15,7 +15,7 @@ class CorsApprovalMiddleware
      */
     public function handle($request, Closure $next)
     {
-        header("Access-Control-Allow-Origin: http://localhost:8080");
+        header("Access-Control-Allow-Origin: ".env('FRONTEND_URL'));
         //ALLOW options method
         $headers = [
             'Access-Control-Allow-Methods' => 'POST, GET, OPTIONS, PUT, PATCH, DELETE',
@@ -29,7 +29,7 @@ class CorsApprovalMiddleware
         $response = $next($request);
         foreach($headers as $key => $value)
         {
-            $response->header($key, $value);
+            $response->headers->set($key, $value);  //$response->header($key, $value); => We can write it this way but ->header() on Response object have no function for binaryfileresponse
         }
         return $response;
     }

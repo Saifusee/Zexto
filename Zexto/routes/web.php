@@ -15,8 +15,6 @@ Route::get('/', function () {
     return view('welcome')->with('frontend_url', env('FRONTEND_URL'));
 });
 
-Route::get('/test', function () {
-    return view('payu.invoice');
-});
-
 Route::post('transaction/checkout/payment/{id}/payu/response', 'PaymentController@payuPaymentResponse');
+
+Route::get('test', 'TestController@index');
