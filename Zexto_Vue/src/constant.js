@@ -9,21 +9,33 @@
 export const DOMAIN_FRONTEND = "http://localhost:8080/";
 //DOMAIN of BACKEND, route to backened where all the api request send.
 export const DOMAIN_BACKEND = "http://localhost:8000/api/";
-
+//DOMAIN of BACKEND, route to backened where all the files store in server.
+export const DOMAIN_BACKEND_FILE_DIRECTORY = "http://localhost:8000/";
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////     IMAGES     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Path to all the User Images on Backend Server.
-export const DOMAIN_BACKEND_USER_IMAGES = "http://localhost:8000/images/users/profile/";
+export const DOMAIN_BACKEND_USER_IMAGES = `${DOMAIN_BACKEND_FILE_DIRECTORY}images/users/profile/`;
 //Path to all the BLOG related Images on Backend Server.
-export const DOMAIN_BACKEND_BLOG_MAIN_IMAGES = "http://localhost:8000/images/blogs/main/";
-export const DOMAIN_BACKEND_BLOG_SUB_IMAGES_1 = "http://localhost:8000/images/blogs/sub/1/";
-export const DOMAIN_BACKEND_BLOG_SUB_IMAGES_2 = "http://localhost:8000/images/blogs/sub/2/";
-export const DOMAIN_BACKEND_BLOG_SUB_IMAGES_3 = "http://localhost:8000/images/blogs/sub/3/";
+export const DOMAIN_BACKEND_BLOG_MAIN_IMAGES = `${DOMAIN_BACKEND_FILE_DIRECTORY}images/blogs/main/`;
+export const DOMAIN_BACKEND_BLOG_SUB_IMAGES_1 = `${DOMAIN_BACKEND_FILE_DIRECTORY}images/blogs/sub/1/`;
+export const DOMAIN_BACKEND_BLOG_SUB_IMAGES_2 = `${DOMAIN_BACKEND_FILE_DIRECTORY}images/blogs/sub/2/`;
+export const DOMAIN_BACKEND_BLOG_SUB_IMAGES_3 = `${DOMAIN_BACKEND_FILE_DIRECTORY}images/blogs/sub/3/`;
+//Path to all the PRODUCT related Images on Backend Server.
+export const DOMAIN_BACKEND_PRODUCT_MAIN_IMAGES = `${DOMAIN_BACKEND_FILE_DIRECTORY}images/products/main/`;
+export const DOMAIN_BACKEND_PRODUCT_DESCRIPTION_IMAGES = `${DOMAIN_BACKEND_FILE_DIRECTORY}images/products/description/`;
+export const DOMAIN_BACKEND_PRODUCT_SUB_IMAGES_1 = `${DOMAIN_BACKEND_FILE_DIRECTORY}images/products/sub/1/`;
+export const DOMAIN_BACKEND_PRODUCT_SUB_IMAGES_2 = `${DOMAIN_BACKEND_FILE_DIRECTORY}images/products/sub/2/`;
+export const DOMAIN_BACKEND_PRODUCT_SUB_IMAGES_3 = `${DOMAIN_BACKEND_FILE_DIRECTORY}images/products/sub/3/`;
+export const DOMAIN_BACKEND_PRODUCT_SUB_IMAGES_4 = `${DOMAIN_BACKEND_FILE_DIRECTORY}images/products/sub/4/`;
+export const DOMAIN_BACKEND_PRODUCT_SUB_IMAGES_5 = `${DOMAIN_BACKEND_FILE_DIRECTORY}images/products/sub/5/`;
+export const DOMAIN_BACKEND_PRODUCT_SUB_IMAGES_6 = `${DOMAIN_BACKEND_FILE_DIRECTORY}images/products/sub/6/`;
+
+
 
 
 //Route for root directory to access images and other files.
-export const ROOT_URL = "http://localhost:8080/src/fashi/";
+export const ROOT_URL = `${DOMAIN_FRONTEND}src/fashi/`;
 //setTimeout function time value to disappear form errors.
 export const TIMEOUT = 60000;
 

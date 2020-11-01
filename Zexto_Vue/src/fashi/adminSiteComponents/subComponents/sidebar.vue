@@ -38,7 +38,7 @@
                 <span>Dashboard</span></router-link>
             </li>
 
-            <!-- Nav Item - Utilities Collapse Menu -->
+            <!-- Nav Item - Blog Details-->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
                 <i class="fas fa-fw fa-wrench"></i>
@@ -49,6 +49,24 @@
                     <h6 class="collapse-header">{{$store.getters.getterUserUsername}}'s Blog Details</h6>
                     <router-link :to="{name: 'admin-user-blog', params: {id: this.$store.getters.getterUserId}}"  tag="a" class="collapse-item">All Blogs</router-link>
                     <router-link :to="{name: 'admin-add-blog'}"  tag="a" class="collapse-item">Add New Blog</router-link>
+                </div>
+                </div>
+            </li>
+            <!-- Nav Item - Blog Details-->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProduct" aria-expanded="true" aria-controls="collapseUtilities">
+                <i class="fas fa-fw fa-wrench"></i>
+                <span>Products</span>
+                </a>
+                <div id="collapseProduct" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">{{$store.getters.getterUserUsername}}'s Product Details</h6>
+                    <router-link :to="{name: 'admin-user-product', params: {id: this.$store.getters.getterUserId}}"  tag="a" class="collapse-item">All Products</router-link>
+                    <router-link :to="{name: 'admin-add-product', params: {userId: this.$store.getters.getterUserId}}"  tag="a" class="collapse-item">Add New Product</router-link>
+                    <div class="collapse-divider"></div>
+                    <h6 class="collapse-header">Add Product Taxes</h6>
+                    <router-link :to="{name: 'admin-all-tax', params: {id: this.$store.getters.getterUserId}}"  tag="a" class="collapse-item">All Taxes</router-link>
+                    <router-link :to="{name: 'admin-add-tax'}"  tag="a" class="collapse-item">Add Taxes</router-link>
                 </div>
                 </div>
             </li>
@@ -73,6 +91,21 @@
                     <router-link :to="{name: 'admin-all-user'}"  tag="a" class="collapse-item">All Users</router-link>
                     <router-link :to="{name: 'admin-add-user'}"  tag="a" class="collapse-item">Add New User</router-link>
 
+                </div>
+                </div>
+            </li>
+
+            <!-- Products Details -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProducts" aria-expanded="true" aria-controls="collapseBlogs">
+                <i class="fas fa-fw fa-folder"></i>
+                <span>Products Details</span>
+                </a>
+                <div id="collapseProducts" class="collapse" aria-labelledby="headingBlogs" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Zexto Products Details</h6>
+                    <router-link :to="{name: 'admin-all-product'}"  tag="a" class="collapse-item">All Products</router-link>
+                    <router-link :to="{name: 'admin-add-product', params: {userId: this.$store.getters.getterUserId}}"  tag="a" class="collapse-item">Add New Products</router-link>
                 </div>
                 </div>
             </li>

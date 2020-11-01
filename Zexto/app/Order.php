@@ -3,11 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Tzsk\Payu\Fragment\Payable;
 
 class Order extends Model
 {
-    use Payable;
+    use Payable, SoftDeletes;
 
     protected $fillable = [
         'local_txnid', 'payment_gateway_txnid', 'user_id', 'order_amount', 'order_status', 'payment_status', 'shipping_address', 'shipping_zipcode', 'payment_gateway_response', 'order_completed_at',

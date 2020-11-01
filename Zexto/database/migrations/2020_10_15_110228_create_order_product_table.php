@@ -20,6 +20,7 @@ class CreateOrderProductTable extends Migration
             $table->integer('product_price')->comment('Price of product at the time when order takes place');
             $table->integer('product_total_price')->comment('Total price charge with all quantities requested.');
             $table->integer('product_quantity');
+            $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('no action')->onUpdate('no action');

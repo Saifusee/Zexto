@@ -9,7 +9,9 @@ import user from "./modules/mainSite/user"
 import modal from "./modules/mainSite/modal" 
 
 //Vuex Modules of Admin Site
-import addBlog from "./modules/adminSite/addBlog" 
+import blog from "./modules/adminSite/blog" 
+import product from "./modules/adminSite/product"
+import tax from "./modules/adminSite/tax" 
 
 
 Vue.use(Vuex);
@@ -23,8 +25,10 @@ export const store = new Vuex.Store({
         login,
         user,
         modal,
-
+        
         //Admin Site
-        addBlog,
+        blog,
+        product,
+        tax,
     }
 });

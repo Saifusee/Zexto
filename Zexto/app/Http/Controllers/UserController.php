@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use File;
 use App\Mail\VerifyEmail;
+use App\Product;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use App\Http\Requests\RegisterRequest;
@@ -26,38 +27,23 @@ class UserController extends Controller
      */
     public function store(RegisterRequest $request)
     {
-        //For password encryption during registration a mutator has been set in User Model and for login it has been working default by JWt.
-        $value = array_except($request->all(), ['profile_picture']);
+            //For password encryption during registration a mutator has been set in User Model and for login it has been working default by JWT.
+            $value = array_except($request->all(), ['profile_picture']);
 
-        //Creating new user with empty profile picture field.
-        $user = User::create($value);
-        
-        //Checking if image exist and if exist save it server and rename it. 
-        if($request->profile_picture !== 'undefined' && $request->profile_picture !== null)
-        {
-            //Renaming images file 
-            $profile_picture_name = 'profile_picture'.time().'.'.$request->profile_picture->getClientOriginalExtension();
-            //Storing images to server here with the name you create.
-            $request->profile_picture->move(public_path('images/users/profile'), $profile_picture_name);
-            //Copying file to server to create a small size copy later
-            File::copy('images/users/profile/'.$profile_picture_name, 'images/users/profile/thumb/'.$profile_picture_name);
-            //Resizing the copied image on server.
-            $resize = new \App\SmartResize();
-            $resize->smart_resize_image('images/users/profile/thumb/'.$profile_picture_name, $width = 200,$height =0, $proportional = true,  $output = 'file', $delete_original = false, $use_linux_commands = false );
+            //Creating new user with empty profile picture field.
+            $user = User::create($value);
+            
+            //Uploadin image to server.
+            $profile_image_name = static::fileUpload($request->profile_picture, $user->profile_picture, "images/users/profile", "images/users/profile/thumb", "profile_picture");
+            $user['profile_picture'] = $profile_image_name;
 
-            //Updating the images name to database with its location
-            $user->profile_picture = $profile_picture_name;
-        } else
-        {
-            $user->profile_picture = '0_default.jpg';
-        }
-        $user->save();
+            $user->save();
 
-        //Sending Verification Email
-        Mail::to($request->email)->send(new VerifyEmail($user->id, $user->username));
+            //Sending Verification Email
+            Mail::to($request->email)->send(new VerifyEmail($user->id, $user->username));
 
-        
-        return response()->json($user, 201);
+            
+            return response()->json($user, 201);
     }
 
 
@@ -113,6 +99,8 @@ class UserController extends Controller
     {
         $user['blogs_count'] = $user->blogs->count();
         $user['comments_count'] = $user->blogsComments->count();
+        $product = Product::where('vendor_id', $user->id)->get();
+        $user['products_count'] = $product->count();
 
         return response()->json($user, 200);
     }

@@ -21,13 +21,14 @@ class CreateBlogsTable extends Migration
             $table->mediumText('blog_quote')->nullable();
             $table->string('blog_quote_author')->nullable();
             $table->string('blog_main_image')->nullable();
-            $table->string('blog_status')->default("Disapproved");
+            $table->enum('blog_status', ['Approved', 'Disapproved'])->default('Disapproved');
             $table->string('blog_sub_image_1')->nullable();
             $table->string('blog_sub_image_2')->nullable();
             $table->string('blog_sub_image_3')->nullable();
             $table->string('category_tag' )->default('None');
             $table->text('product_tags' )->nullable();
             $table->bigInteger('user_id')->unsigned();
+            $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('no action');

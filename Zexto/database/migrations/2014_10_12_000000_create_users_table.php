@@ -25,6 +25,7 @@ class CreateUsersTable extends Migration
             $table->boolean('is_vendor')->default(false);
             $table->boolean('is_admin')->default(false);
             $table->mediumText('remember_token')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

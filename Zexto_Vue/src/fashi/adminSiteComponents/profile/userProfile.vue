@@ -66,6 +66,10 @@
                             <td class="tags">Total Comments on Blogs</td>
                             <td class="value"><router-link :to="{name: 'admin-user-comments', params: {id: userData.id}}" tag="a" class="value">{{userData.comments_count}} (Click Here)</router-link></td>
                         </tr>
+                        <tr>
+                            <td class="tags">Total Products listed</td>
+                            <td class="value"><router-link :to="{name: 'admin-user-product', params: {id: userData.id}}" tag="a" class="value">{{userData.products_count}} (Click Here)</router-link></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

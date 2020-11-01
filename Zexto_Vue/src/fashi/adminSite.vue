@@ -80,8 +80,8 @@ export default {
 }
 }
 </script>
+
 <style scoped>
 @import url("http://localhost:8080/src/fashi/adminSiteComponents/files/css/sb-admin-2.min.css");
 @import url("http://localhost:8080/src/fashi/adminSiteComponents/files/vendor/fontawesome-free/css/all.min.css");
-@import url("http://localhost:8080/src/fashi/adminSiteComponents/files/vendor/datatables/dataTables.bootstrap4.min.css");
 </style>

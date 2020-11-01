@@ -39,6 +39,13 @@ import adminUserComments from "./../fashi/adminSiteComponents/blog/adminUserComm
 import adminAllComments from "./../fashi/adminSiteComponents/blog/adminAllComments.vue"
 import adminProfile from "./../fashi/adminSiteComponents/profile/adminProfile.vue"
 import userProfile from "./../fashi/adminSiteComponents/profile/userProfile.vue"
+import adminAllProduct from "./../fashi/adminSiteComponents/product/adminAllProduct.vue"
+import adminUserProduct from "./../fashi/adminSiteComponents/product/adminUserProduct.vue"
+import adminAddProduct from "./../fashi/adminSiteComponents/product/adminAddProduct.vue"
+import adminEditProduct from "./../fashi/adminSiteComponents/product/adminEditProduct.vue"
+import adminAllTax from "./../fashi/adminSiteComponents/product/adminAllTax.vue"
+import adminAddTax from "./../fashi/adminSiteComponents/product/adminAddTax.vue"
+import adminEditTax from "./../fashi/adminSiteComponents/product/adminEditTax.vue"
 
 
 export const routes = [
@@ -68,6 +75,7 @@ export const routes = [
             { path: 'comments/all', component: adminAllComments, name: "admin-all-comments"}, //Show all the comments on all blogs in site.
             { path: 'blog/:id/comments', component: adminBlogComments, name: "admin-blog-comments"},  //Show all the comments on particular blog to admin.
             { path: 'blog/:id/user/comments', component: adminUserComments, name: "admin-user-comments"},   //Show all the comments by a particular user.
+            { path: 'product/all', component: adminAllProduct, name: "admin-all-product"}, //show admin dashboard.
             { path: 'admin-dashboard', component: adminDashboard, name: "admin-admin-dashboard"}, //show admin dashboard.
             { path: 'try', component: adminTry, name: "try"}, //show admin dashboard.
 
@@ -99,7 +107,14 @@ children:
     { path: 'blog/:id/edit', component: adminEditBlog, name: "admin-edit-blog"},  //Show edit blog page.
     { path: 'blog/user/:id', component: adminUserBlog, name: "admin-user-blog"},  //Show all blogs by Logged in user
     { path: 'blog/:id/comments', component: adminVendorBlogComments, name: "admin-user-blog-comments"},  //Show all the comments on particular blog to admin.
+    { path: 'product/user/:id', component: adminUserProduct, name: "admin-user-product"}, //show admin dashboard.
+    { path: 'product/:userId/add-product', component: adminAddProduct, name: "admin-add-product"},  //Add new products
+    { path: ':userId/product/:id/edit', component: adminEditProduct, name: "admin-edit-product"},  //Show edit blog page.
+    { path: 'product/tax/all/:id', component: adminAllTax, name: "admin-all-tax"},  //Show all the taxes.
+    { path: 'product/tax/add', component: adminAddTax, name: "admin-add-tax"},  //Show the add taxes page.
+    { path: 'product/tax/:id/edit', component: adminEditTax, name: "admin-edit-tax"},  //Show the add taxes page.
     { path: 'dashboard', component: vendorDashboard, name: "admin-dashboard"},  // Admin Dashboard
+    
 
 ]
 }, 
@@ -146,10 +161,19 @@ children:
             { path: 'shopping-cart', component: shoppingCart, name: "shopping-cart"},
             { path: 'shop', component: shop, name: "shop"},
             { path: '', component: index, name: "home"},
-            { path: 'verify-email/:token/verify/:id', component: emailVerified, name: "email-verified"},
-            { path: 'check-out/transaction/success', component: emailVerified, name: "transaction-success"},
-            { path: 'check-out/transaction/fail', component: emailVerified, name: "transaction-fail"},
-            { path: 'check-out/transaction/cancel', component: emailVerified, name: "transaction-cancel"},
+            { path: 'verify-email/:token/verify/:id', component: emailVerified, name: "email-verified", beforeEnter: (to, from, next) =>
+            {
+                axios.post('me').then(resposne => 
+                    {
+                        if(resposne.data.email_verified === 0)
+                        {
+                            next();
+                        } else 
+                        {
+                            window.location = `${constant.DOMAIN_FRONTEND}`;
+                        }
+                    })
+            }},
             { path: '*', component: notFound, name: "404"},
         ]
 

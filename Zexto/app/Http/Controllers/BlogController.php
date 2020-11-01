@@ -62,78 +62,18 @@ class BlogController extends Controller
         //Create a new blog
         $blog = Blog::create($value);
 
-        //Checking if images exist in the request recieved and then do functionality.
-        if($request->blog_main_image !== 'undefined' && $request->blog_main_image !== null)
-        {
-            //Renaming images file 
-            $main_image_name = 'blog_main_image'.time().'.'.$request->blog_main_image->getClientOriginalExtension();
-            //Storing images to server here with the name you create.
-            $request->blog_main_image->move(public_path('images/blogs/main'), $main_image_name);
-            //Copy image to thumb folder to convert it later in low size image
-            File::copy('images/blogs/main/'.$main_image_name, 'images/blogs/main/thumb/'.$main_image_name);
-            //Resizing the copied image on server.
-            $resize = new \App\SmartResize();
-            $resize->smart_resize_image('images/blogs/main/thumb/'.$main_image_name, $width = 200,$height =0, $proportional = true,  $output = 'file', $delete_original = false, $use_linux_commands = false );
-            //Updating the images name to database with its location
-            $blog->blog_main_image = $main_image_name;
-        } else
-        {
-            $blog->blog_main_image = 'default.jpg';
-        }
+        //Uploading images to server
+        $main_image_name = static::imageFileUpload($request->blog_main_image, "images/blogs/main", "blog_main_image", null);
+        $blog['blog_main_image'] = $main_image_name;
 
-        if($request->blog_sub_image_1 !== 'undefined' && $request->blog_sub_image_1 !== null)
-        {
-            //Renaming images file 
-            $sub_image_name_1 = 'blog_sub_image_1'.time().'.'.$request->blog_sub_image_1->getClientOriginalExtension();
-            //Storing images to server here with the name you create.
-            $request->blog_sub_image_1->move(public_path('images/blogs/sub/1'), $sub_image_name_1);
-            //Copy image to thumb folder to convert it later in low size image
-            File::copy('images/blogs/sub/1/'.$sub_image_name_1, 'images/blogs/sub/1/thumb/'.$sub_image_name_1);
-            //Resizing the copied image on server.
-            $resize = new \App\SmartResize();
-            $resize->smart_resize_image('images/blogs/sub/1/thumb/'.$sub_image_name_1, $width = 200,$height =0, $proportional = true,  $output = 'file', $delete_original = false, $use_linux_commands = false );
-            //Updating the images name to database with its location
-            $blog->blog_sub_image_1 =  $sub_image_name_1;
-        } else
-        {
-            $blog->blog_sub_image_1 = '0_default.jpg';
-        }
+        $sub_image_name_1 = static::imageFileUpload($request->blog_sub_image_1, "images/blogs/sub/1", "blog_sub_image_1_", null);
+        $blog['blog_sub_image_1'] = $sub_image_name_1;
 
-        if($request->blog_sub_image_2 !== 'undefined' && $request->blog_sub_image_2 !== null)
-        {
-            //Renaming images file 
-            $sub_image_name_2 = 'blog_sub_image_2'.time().'.'.$request->blog_sub_image_2->getClientOriginalExtension();
-            //Storing images to server here with the name you create.
-            $request->blog_sub_image_2->move(public_path('images/blogs/sub/2'), $sub_image_name_2);
-            //Copy image to thumb folder to convert it later in low size image
-            File::copy('images/blogs/sub/2/'.$sub_image_name_2, 'images/blogs/sub/2/thumb/'.$sub_image_name_2);
-            //Resizing the copied image on server.
-            $resize = new \App\SmartResize();
-            $resize->smart_resize_image('images/blogs/sub/2/thumb/'.$sub_image_name_2, $width = 200,$height =0, $proportional = true,  $output = 'file', $delete_original = false, $use_linux_commands = false );
-            //Updating the images name to database with its location
-             $blog->blog_sub_image_2 = $sub_image_name_2;
-        } else
-        {
-            $blog->blog_sub_image_2 = '0_default';
-        }
+        $sub_image_name_2 = static::imageFileUpload($request->blog_sub_image_2, "images/blogs/sub/2", "blog_sub_image_2_", null);
+        $blog['blog_sub_image_2'] = $sub_image_name_2;
 
-        if($request->blog_sub_image_3 !== 'undefined' && $request->blog_sub_image_3 !== null)
-        {
-            //Renaming images file 
-            $sub_image_name_3 = 'blog_sub_image_3'.time().'.'.$request->blog_sub_image_3->getClientOriginalExtension();
-            //Storing images to server here with the name you create.
-            $request->blog_sub_image_3->move(public_path('images/blogs/sub/3'), $sub_image_name_3);
-            //Copy image to thumb folder to convert it later in low size image
-            File::copy('images/blogs/sub/3/'.$sub_image_name_3, 'images/blogs/sub/3/thumb/'.$sub_image_name_3);
-            //Resizing the copied image on server.
-            $resize = new \App\SmartResize();
-            $resize->smart_resize_image('images/blogs/sub/3/thumb/'.$sub_image_name_3, $width = 200,$height =0, $proportional = true,  $output = 'file', $delete_original = false, $use_linux_commands = false );
-            //Updating the images name to database with its location
-            $blog->blog_sub_image_3 = $sub_image_name_3;
-        } else
-        {
-            $blog->blog_sub_image_3 = '0_default.jpg';
-        }
+        $sub_image_name_3 = static::imageFileUpload($request->blog_sub_image_3, "images/blogs/sub/3", "blog_sub_image_3_", null);
+        $blog['blog_sub_image_3'] = $sub_image_name_3;
 
         //Saving with images name details.
         $blog->save();
@@ -157,92 +97,27 @@ class BlogController extends Controller
     {
         $value = array_except($request->all(), ['blog_main_image', 'blog_sub_image_1', 'blog_sub_image_2', 'blog_sub_image_3']);
 
-        //Create a new blog
-        $blog->update($value);
-
+        
         //Getting previous image
         $previous_main_image_name = $blog->blog_main_image;
         $previous_sub_image_1_name = $blog->blog_sub_image_1;
         $previous_sub_image_2_name = $blog->blog_sub_image_2;
         $previous_sub_image_3_name = $blog->blog_sub_image_3;
+        //Updating a blog
+        $blog->update($value);
 
-        //Checking if images exist in the request recieved and then do functionality.
-        if($request->blog_main_image !== 'undefined' && $request->blog_main_image !== null)
-        {
-            //Renaming images file 
-            $main_image_name = 'blog_main_image'.time().'.'.$request->blog_main_image->getClientOriginalExtension();
-            //Storing images to server here with the name you create.
-            $request->blog_main_image->move(public_path('images/blogs/main'), $main_image_name);
-            //Copy image to thumb folder to convert it later in low size image
-            File::copy('images/blogs/main/'.$main_image_name, 'images/blogs/main/thumb/'.$main_image_name);
-            //Resizing the copied image on server.
-            $resize = new \App\SmartResize();
-            $resize->smart_resize_image('images/blogs/main/thumb/'.$main_image_name, $width = 200,$height =0, $proportional = true,  $output = 'file', $delete_original = false, $use_linux_commands = false );
-            //Deleting previous file
-            File::delete($previous_main_image_name);
-            //Updating the images name to database with its location
-            $blog->blog_main_image = $main_image_name;
-        } else
-        {
-            $blog->blog_main_image = $previous_main_image_name;
-        }
+        //Updating Images Details.
+        $new_main_image_name = static::imageFileUpload($request->blog_main_image, 'images/blogs/main', 'blog_main_image', $previous_main_image_name);
+        $blog['blog_main_image'] = $new_main_image_name;
 
-        if($request->blog_sub_image_1 !== 'undefined' && $request->blog_sub_image_1 !== null)
-        {
-            //Renaming images file 
-            $sub_image_name_1 = 'blog_sub_image_1'.time().'.'.$request->blog_sub_image_1->getClientOriginalExtension();
-            //Storing images to server here with the name you create.
-            $request->blog_sub_image_1->move(public_path('images/blogs/sub/1'), $sub_image_name_1);
-            //Copy image to thumb folder to convert it later in low size image
-            File::copy('images/blogs/sub/1/'.$sub_image_name_1, 'images/blogs/sub/1/thumb/'.$sub_image_name_1);
-            //Resizing the copied image on server.
-            $resize = new \App\SmartResize();
-            $resize->smart_resize_image('images/blogs/sub/1/thumb/'.$sub_image_name_1, $width = 200,$height =0, $proportional = true,  $output = 'file', $delete_original = false, $use_linux_commands = false );
-            File::delete($previous_sub_image_1_name);
-            //Updating the images name to database with its location
-            $blog->blog_sub_image_1 = $sub_image_name_1;
-        } else
-        {
-            $blog->blog_sub_image_1 = $previous_sub_image_1_name;
-        }
+        $new_sub_image_1_name = static::imageFileUpload($request->blog_sub_image_1, 'images/blogs/sub/1', 'blog_sub_image_1_', $previous_sub_image_1_name);
+        $blog['blog_sub_image_1'] = $new_sub_image_1_name;
 
-        if($request->blog_sub_image_2 !== 'undefined' && $request->blog_sub_image_2 !== null)
-        {
-            //Renaming images file 
-            $sub_image_name_2 = 'blog_sub_image_2'.time().'.'.$request->blog_sub_image_2->getClientOriginalExtension();
-            //Storing images to server here with the name you create.
-            $request->blog_sub_image_2->move(public_path('images/blogs/sub/2'), $sub_image_name_2);
-            //Copy image to thumb folder to convert it later in low size image
-            File::copy('images/blogs/sub/2/'.$sub_image_name_2, 'images/blogs/sub/2/thumb/'.$sub_image_name_2);
-            //Resizing the copied image on server.
-            $resize = new \App\SmartResize();
-            $resize->smart_resize_image('images/blogs/sub/2/thumb/'.$sub_image_name_2, $width = 200,$height =0, $proportional = true,  $output = 'file', $delete_original = false, $use_linux_commands = false );
-            File::delete($previous_sub_image_2_name);
-            //Updating the images name to database with its location
-             $blog->blog_sub_image_2 = $sub_image_name_2;
-        } else
-        {
-            $blog->blog_sub_image_2 = $previous_sub_image_2_name;
-        }
+        $new_sub_image_2_name = static::imageFileUpload($request->blog_sub_image_2, 'images/blogs/sub/2', 'blog_sub_image_2_', $previous_sub_image_2_name);
+        $blog['blog_sub_image_2'] = $new_sub_image_2_name;
 
-        if($request->blog_sub_image_3 !== 'undefined' && $request->blog_sub_image_3 !== null)
-        {
-            //Renaming images file 
-            $sub_image_name_3 = 'blog_sub_image_3'.time().'.'.$request->blog_sub_image_3->getClientOriginalExtension();
-            //Storing images to server here with the name you create.
-            $request->blog_sub_image_3->move(public_path('images/blogs/sub/3'), $sub_image_name_3);
-            //Copy image to thumb folder to convert it later in low size image
-            File::copy('images/blogs/sub/3/'.$sub_image_name_3, 'images/blogs/sub/3/thumb/'.$sub_image_name_3);
-            //Resizing the copied image on server.
-            $resize = new \App\SmartResize();
-            $resize->smart_resize_image('images/blogs/sub/3/thumb/'.$sub_image_name_3, $width = 200,$height =0, $proportional = true,  $output = 'file', $delete_original = false, $use_linux_commands = false );
-            File::delete($previous_sub_image_3_name);
-            //Updating the images name to database with its location
-            $blog->blog_sub_image_3 = $sub_image_name_3;
-        } else
-        {
-            $blog->blog_sub_image_3 = $previous_sub_image_3_name;
-        }
+        $new_sub_image_3_name = static::imageFileUpload($request->blog_sub_image_3, 'images/blogs/sub/3', 'blog_sub_image_3_', $previous_sub_image_3_name);
+        $blog['blog_sub_image_3'] = $new_sub_image_3_name;
 
         //Saving with images name details.
         $blog->save();
@@ -268,11 +143,7 @@ class BlogController extends Controller
     {   
         $blog_data = Blog::find($id);
         $blog = Blog::destroy($id);
-        //Delete images associated with Blogs
-        File::delete($blog_data->blog_main_image);
-        File::delete($blog_data->blog_sub_image_1);
-        File::delete($blog_data->blog_sub_image_2);
-        File::delete($blog_data->blog_sub_image_3);
+
         return response()->json($blog, 204);   
     }
 
@@ -287,6 +158,6 @@ class BlogController extends Controller
             $blog->blog_status = 'Approved';
         }
         $blog->save();
-        return response()->json("Nope", 200);
+        return response()->json($blog, 200);
     }
 }

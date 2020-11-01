@@ -27,7 +27,7 @@
                      <!-- For Product Tags -->
                       <template slot="product_tags" slot-scope="{row}">
                           <template v-if="row.product_tags !== ''">
-                              <td>{{row.product_tags}}</td>
+                              {{row.product_tags}}
                           </template>
                           <template v-else>
                               ---No Tags---

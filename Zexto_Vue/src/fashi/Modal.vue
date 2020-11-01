@@ -128,7 +128,21 @@ export default {
 
                 case "admin-allComment-change-admin-status":
                 eventBus.$emit('event-admin-allComment-change-admin-status', data);
-                    break;                 
+                    break;   
+
+                //adminAllProducts.vue related source
+                case "admin-allProduct-delete":
+                eventBus.$emit('event-admin-allProduct-delete', data);
+                    break; 
+
+                case "admin-allProduct-change-status":
+                eventBus.$emit('event-admin-allProduct-change-status', data);
+                    break; 
+
+                //adminAllTax.vue related source
+                case "admin-allTaxes-delete":
+                eventBus.$emit('event-admin-allTaxes-delete', data);
+                    break; 
 
 
 

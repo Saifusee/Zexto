@@ -5,6 +5,7 @@ import VueRouter from 'vue-router'
 import * as constant from './constant'
 import { store } from './store/store';
 import { routes } from './router/routes';
+import Multiselect from 'vue-multiselect'
 
 import './plugins/vue-tables-2'
 
@@ -29,20 +30,30 @@ Vue.mixin({
       /////////     IMAGES     /////////////////////////////////////////////
       //For backend user images
       USER_IMAGE: constant.DOMAIN_BACKEND_USER_IMAGES,
-      //For backend main blog images
+      //For backend blog images
       BLOG_MAIN_IMAGE: constant.DOMAIN_BACKEND_BLOG_MAIN_IMAGES,
-      //For backend blog sub-1 images
       BLOG_SUB_IMAGE_1: constant.DOMAIN_BACKEND_BLOG_SUB_IMAGES_1,
-      //For backend blog sub-2 images
       BLOG_SUB_IMAGE_2: constant.DOMAIN_BACKEND_BLOG_SUB_IMAGES_2,
-      //For backend blog sub-3 images
       BLOG_SUB_IMAGE_3: constant.DOMAIN_BACKEND_BLOG_SUB_IMAGES_3,
+      //For backend product images
+      PRODUCT_MAIN_IMAGE: constant.DOMAIN_BACKEND_PRODUCT_MAIN_IMAGES,
+      PRODUCT_DESCRIPTION_IMAGE: constant.DOMAIN_BACKEND_PRODUCT_DESCRIPTION_IMAGES,
+      PRODUCT_SUB_IMAGE_1: constant.DOMAIN_BACKEND_PRODUCT_SUB_IMAGES_1,
+      PRODUCT_SUB_IMAGE_2: constant.DOMAIN_BACKEND_PRODUCT_SUB_IMAGES_2,
+      PRODUCT_SUB_IMAGE_3: constant.DOMAIN_BACKEND_PRODUCT_SUB_IMAGES_3,
+      PRODUCT_SUB_IMAGE_4: constant.DOMAIN_BACKEND_PRODUCT_SUB_IMAGES_4,
+      PRODUCT_SUB_IMAGE_5: constant.DOMAIN_BACKEND_PRODUCT_SUB_IMAGES_5,
+      PRODUCT_SUB_IMAGE_6: constant.DOMAIN_BACKEND_PRODUCT_SUB_IMAGES_6,
+
       //For all the frontend files, images, etc.
       ROOT_URL: constant.ROOT_URL,
       ////////// NOTE: You still have to change the paths of @import function in adminSite.vue and mainSite.vue under <style> tags to include css files. //////////
     };
   },
 })
+
+
+Vue.component('multiselect', Multiselect)
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

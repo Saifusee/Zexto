@@ -51,8 +51,16 @@ Route::group([
     Route::get('comments/{comment}/blog/comments', 'BlogsCommentController@blogCommentAdminIndex');
     Route::get('comments/{comment}/user/comments', 'BlogsCommentController@userCommentAdminIndex');
 
+    //All Product related
+    Route::resource('products', 'ProductController');
+    Route::get('products/user/{product}', 'ProductController@userIndex');
+    Route::post('products/{product}/status', 'ProductController@changeStatus');
 
-    Route::post('checkout/payment/payu', 'PaymentController@payuPaymentInitialize');
+    //All Taxes related
+    Route::resource('taxes', 'TaxController');
+    Route::get('taxes/{tax}', 'TaxController@userIndex');
 
+    //Payu Gateway
+    Route::post('checkout/payment/payu', 'PaymentController@payuPaymentInitialize'); 
 });
 

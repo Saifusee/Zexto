@@ -18,8 +18,9 @@ class CreateBlogsCommentsTable extends Migration
             $table->mediumText('comment_data');
             $table->bigInteger('user_id')->unsigned();
             $table->bigInteger('blog_id')->unsigned();
-            $table->string('comment_status')->default('Approved');
-            $table->string('comment_admin_status')->default('Admin-Approved');
+            $table->enum('comment_status', ['Approved', 'Disapproved'])->default('Approved');
+            $table->enum('comment_admin_status', ['Admin-Approved', 'Admin-Dispproved'])->default('Admin-Approved');
+            $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('no action');

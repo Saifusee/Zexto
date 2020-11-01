@@ -66,6 +66,14 @@
                             <td class="tags">Total Blogs:</td>
                             <td class="value"><router-link :to="{name: 'admin-user-blog', params: {id: id}}" tag="a" class="value">{{blogCount}} (Click Here)</router-link></td>
                         </tr>
+                        <tr>
+                            <td class="tags">Total Comments on Blogs:</td>
+                            <td class="value"><router-link :to="{name: 'admin-user-comments', params: {id: id}}" tag="a" class="value">{{commentCount}} (Click Here)</router-link></td>
+                        </tr>
+                        <tr>
+                            <td class="tags">Total Products listed:</td>
+                            <td class="value"><router-link :to="{name: 'admin-user-product', params: {id: id}}" tag="a" class="value">{{productCount}} (Click Here)</router-link></td>
+                        </tr>
                     </table>
                 </div>
 
@@ -95,6 +103,7 @@ export default {
             this.methodProfilePicture(response.data.profile_picture);
             this.commentCount = response.data.comments_count;
             this.blogCount = response.data.blogs_count;
+            this.productCount = response.data.products_count;
             if(response.data.is_vendor === 1)
             {
                 document.getElementById("is_vendor_edit").checked = true;
@@ -112,6 +121,7 @@ export default {
         return {
             commentCount: "",
             blogCount: "",
+            productCount: "",
             registrationErrors: {},
              /*We are taking here id from route params not from user vuex bcz on refresh this
               data lost but not param so we past user id from vuex on profile button route and take that value here*/

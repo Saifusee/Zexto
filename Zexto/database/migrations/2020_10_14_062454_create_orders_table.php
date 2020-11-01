@@ -25,6 +25,7 @@ class CreateOrdersTable extends Migration
             $table->string('shipping_zipcode');
             $table->text('payment_gateway_response')->nullable();
             $table->timestamp('order_completed_at')->nullable();
+            $table->softDeletes();
             $table->timestamps();
             
             $table->foreign('user_id')->references('id')->on('users')->onDelete('no action')->onUpdate('no action');

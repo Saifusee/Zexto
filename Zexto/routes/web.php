@@ -16,5 +16,3 @@ Route::get('/', function () {
 });
 
 Route::post('transaction/checkout/payment/{id}/payu/response', 'PaymentController@payuPaymentResponse');
-
-Route::get('test', 'TestController@index');
